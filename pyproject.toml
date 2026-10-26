@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "buds-sidekick"
-version = "1.0.1"
+version = "1.0.2"
 description = "A private, local voice assistant for Galaxy Buds FE on a Mac: listens, knows who is speaking, remembers, whispers help, translates."
 readme = "README.md"
 requires-python = ">=3.11"

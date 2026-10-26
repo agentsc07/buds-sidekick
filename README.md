@@ -33,9 +33,9 @@ flowchart LR
   ASK --> OUT
 ```
 Modes: **Standby**, **Listen** (live transcript, speaker names, replay), **Autopilot** (Listen plus short whispers: your promises noted, a
-stored commitment, a name briefed), **Private** (mic closed, nothing kept). **Ask** is a tap or "Sidekick, ...". Translation English <->
-Telugu is typed or spoken from the Home screen; live voice-to-voice translation exists but is switched off in this release
-(`live_translation: true` to try it; see [scope decision](SUBMISSION_LOG.md)). Details: [docs/architecture.md](docs/architecture.md).
+stored commitment, a name briefed), **Private** (mic closed, nothing kept). **Ask** is a tap or "Sidekick, ...". **Translate** is a switch on Home with two
+dropdowns, "They speak" and "I hear" (Telugu or English): whatever they say is translated and spoken in your ear. It is experimental
+(about 6 s delay; see Results). Typed translation also works ("translate to Telugu: ..."). Details: [docs/architecture.md](docs/architecture.md).
 
 ## Results
 Measured 2026-10-26 on a MacBook Air M3, 16 GB. "Synthetic" = macOS `say` voices, a floor and not real people. Real-voice rows are marked
@@ -53,7 +53,7 @@ _pending_ until recorded ([docs/validation/recording-script.md](docs/validation/
 | Autopilot precision, human-rated session | _pending_ | thumbs from a real session |
 | Real-voice WER, real-voice speaker accuracy | _pending_ | needs recordings |
 
-Latency excludes spoken playback. Live Telugu interpreter (switched off): median 5.8-6.6 s on a quiet Mac, target 2.5-3 s, not met.
+Latency excludes spoken playback. Live Translate: median 5.8-6.6 s on a quiet Mac (phrase heard to translation starting), target 2.5-3 s, not met.
 Quality bar: 422 automated tests pass (`cd assistant && python -m pytest -m "not slow"`).
 
 ## Run it

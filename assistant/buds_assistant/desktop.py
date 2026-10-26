@@ -5,7 +5,9 @@ stops the server when the window closes. "Open in Browser" is in the menu. Mode:
 """
 from __future__ import annotations
 
+import json
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -23,14 +25,34 @@ SPLASH = """<html><body style="margin:0;height:100vh;display:grid;place-items:ce
 <div style="font-size:22px;font-weight:600">Buds Sidekick</div><p style="color:#a9a5c0">%s</p></div></body></html>"""
 
 
+PREF = APP_HOME / "app.json"          # {"mode": "auto" | "buds" | "practice"}
+
+
+def get_pref() -> str:
+    try:
+        return json.loads(PREF.read_text()).get("mode", "auto")
+    except Exception:
+        return "auto"
+
+
+def set_pref(mode: str) -> None:
+    PREF.parent.mkdir(parents=True, exist_ok=True)
+    PREF.write_text(json.dumps({"mode": mode}))
+
+
 def buds_connected() -> bool:
-    """Is a Galaxy Buds currently connected to this Mac? (System report; a second or two.)"""
+    """Is a pair of earbuds called "...Buds..." (people rename them: "Sai's Buds FE") connected to this Mac right now?"""
     try:
         out = subprocess.run(["system_profiler", "SPBluetoothDataType"], capture_output=True, text=True, timeout=15).stdout
     except Exception:
         return False
-    head, _, rest = out.partition("Not Connected:")
-    return "Galaxy Buds" in head.partition("Connected:")[2]
+    return parse_buds_connected(out)
+
+
+def parse_buds_connected(out: str) -> bool:
+    connected = re.split(r"^\s*Not Connected:", out, maxsplit=1, flags=re.M)[0]
+    connected = connected.partition("Connected:")[2]
+    return any("buds" in line.lower() for line in connected.splitlines() if line.rstrip().endswith(":"))
 
 
 def alive() -> bool:
@@ -52,13 +74,17 @@ def start_server(simulate: bool) -> subprocess.Popen | None:
 def main(argv: list[str] | None = None) -> int:
     import webview
     args = argv if argv is not None else sys.argv[1:]
-    simulate = "--simulate" in args or ("--buds" not in args and not buds_connected())
+    pref = "practice" if "--simulate" in args else "buds" if "--buds" in args else get_pref()
+    simulate = pref == "practice" or (pref == "auto" and not buds_connected())
     window = webview.create_window("Buds Sidekick", html=SPLASH % ("Starting up…" if not alive() else "Opening…"), width=1280, height=820, min_size=(900, 600),
                                    background_color="#0b0a12")
     proc: list[subprocess.Popen | None] = [None]
 
     def boot() -> None:
-        proc[0] = start_server(simulate)
+        boot_with(simulate)
+
+    def boot_with(sim: bool) -> None:
+        proc[0] = start_server(sim)
         for i in range(240):
             if alive():
                 window.load_url(URL)
@@ -75,7 +101,16 @@ def main(argv: list[str] | None = None) -> int:
     menu = None
     try:
         from webview.menu import Menu, MenuAction
-        menu = [Menu("Sidekick", [MenuAction("Open in Browser", lambda: webbrowser.open(URL)),
+        def switch(mode: str):
+            def go() -> None:                                      # remember the choice and start again in the other mode
+                set_pref(mode)
+                window.load_html(SPLASH % "Switching…")
+                if proc[0] is not None and proc[0].poll() is None:
+                    proc[0].terminate(); proc[0].wait(8)
+                threading.Thread(target=boot_with, args=(mode == "practice",), daemon=True).start()
+            return go
+        menu = [Menu("Sidekick", [MenuAction("Use my earbuds", switch("buds")), MenuAction("Practice mode (no earbuds)", switch("practice")),
+                                  MenuAction("Open in Browser", lambda: webbrowser.open(URL)),
                                   MenuAction("Show Log Folder", lambda: subprocess.run(["open", str(APP_HOME / "logs")]))])]
     except Exception:
         pass

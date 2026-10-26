@@ -14,7 +14,7 @@ privacy policy in SQLite with embeddings for retrieval. **Ask** answers from cal
 **Autopilot** combines rules (your promise becomes a to-do, a stored commitment is mentioned, a known name briefed) with a model
 judge (Gemma 4 12B via Ollama) behind gates: category, minimum gap, hourly budget, never while someone is speaking; every whisper and every
 silence is logged with its reason. Translation English <-> Telugu uses the same resident model and a Telugu voice. A memory-residency
-manager keeps one large model resident on a 16 GB machine. Live voice-to-voice translation was built but is **frozen** (see limitations).
+manager keeps one large model resident on a 16 GB machine. Live translation (they speak one language, you hear the other in your ear) is built and switchable, with the latency caveat below.
 
 ## Evaluation
 Machine: MacBook Air M3, 16 GB, quiet-ish (load average 4-6). Raw data: `docs/validation/eval-results.json`.
@@ -36,8 +36,8 @@ hint in the recogniser prompt fixed it. 422 automated tests pass.
 
 ## Limitations
 - All accuracy numbers so far use synthetic voices; real-speaker speaker-ID, Telugu recognition and human-rated Autopilot precision are pending recordings.
-- The live Interpreter (voice-in, voice-out translation) measured 5.8-6.6 s median against a 2.5-3 s target, is 3-10x slower on a busy Mac and
-  has a 19 s cold start, so it is switched off (`live_translation`). Typed and spoken-command translation work.
+- Live Translate (voice in, voice out) measured 5.8-6.6 s median against a 2.5-3 s target, is 3-10x slower on a busy Mac and
+  has a 19 s cold start. It is on but experimental (`live_translation: false` hides it). Telugu from real speakers is unmeasured.
 - Buds accept one control client (phone Bluetooth must be off); macOS and Apple silicon only; no encryption at rest.
 - Latency figures exclude speech playback.
 

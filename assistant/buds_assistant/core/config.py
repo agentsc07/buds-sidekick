@@ -60,7 +60,9 @@ class Config:
     self_name: str = "Me"                       # the wearer's enrolled voice name (separates you from others)
     telugu_stt: bool = False                     # Telugu speech recognition (Telugu-tuned Whisper); off = English only
     telugu_model: str = "ukta-app/whisper-telugu-ct2"
-    live_translation: bool = False               # SCOPE FREEZE: live voice Translate mode is hidden unless true (typed/spoken "translate ..." always works)
+    live_translation: bool = True                # live voice Translate (set false to hide it; typed/spoken "translate ..." always works)
+    interpreter_from: str = "te"                 # the language they speak: te | en
+    interpreter_to: str = "en"                   # the language you hear in your ears: en | te
     interpreter_two_way: bool = False            # also speak your English as Telugu on the Mac speakers
     interpreter: bool = False                    # whisper an English translation of Telugu speech into your ear
     # buds button map: touch-and-hold normally toggles noise mode behind our back. The command allowlist has no "do nothing"

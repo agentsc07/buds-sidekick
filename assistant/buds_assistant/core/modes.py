@@ -107,7 +107,8 @@ class ModeManager:
                 "route": self.output.route, "conversation_id": self.pipeline.conv_id,
                 "ring_seconds": round(self.ring.seconds, 1), "autopilot": self.policy.enabled,
                 "interpreter_two_way": bool(getattr(self.cfg, "interpreter_two_way", False)),
-                "live_translation": bool(getattr(self.cfg, "live_translation", False))}
+                "live_translation": bool(getattr(self.cfg, "live_translation", False)),
+                "interpreter_from": getattr(self.cfg, "interpreter_from", "te"), "interpreter_to": getattr(self.cfg, "interpreter_to", "en")}
 
     def _publish(self) -> None:
         self.events.publish("mode", **self.state())

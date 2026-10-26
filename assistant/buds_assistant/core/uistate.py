@@ -20,7 +20,7 @@ class UiState:
         self._s: dict[str, Any] = {
             "mode": "standby", "memory_level": "remember", "placement": "ear", "route": "ear", "conversation_id": None,
             "ring_seconds": 0.0, "buds": {"battery": None, "wear": {"L": None, "R": None}},
-            "models": {"chat": "unloaded", "embed": "unloaded", "translate": "unloaded", "telugu": "unloaded"}, "interpreter": {"two_way": False}, "live_translation": False, "pending_mode": None,
+            "models": {"chat": "unloaded", "embed": "unloaded", "translate": "unloaded", "telugu": "unloaded"}, "interpreter": {"two_way": False, "from": "te", "to": "en"}, "live_translation": False, "pending_mode": None,
             "autopilot": {"enabled": False, "feed": []}, "banner": None, "self_name": cfg.self_name}
         self._reducers = {"mode": self._mode, "battery": self._battery, "wear": self._wear, "model_state": self._models,
                           "autopilot_decision": self._decision, "buds": self._buds, "mode_pending": lambda d: self._s.__setitem__("pending_mode", d.get("mode")),
@@ -65,7 +65,7 @@ class UiState:
             if k in d:
                 self._s[k] = d[k]
         self._s["autopilot"]["enabled"] = bool(d.get("autopilot"))
-        self._s["interpreter"] = {"two_way": bool(d.get("interpreter_two_way"))}
+        self._s["interpreter"] = {"two_way": bool(d.get("interpreter_two_way")), "from": d.get("interpreter_from", "te"), "to": d.get("interpreter_to", "en")}
         self._s["live_translation"] = bool(d.get("live_translation"))
 
     def _battery(self, d: dict) -> None:

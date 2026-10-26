@@ -3,7 +3,7 @@
 import { state, set } from "./store.js";
 
 const now = () => Date.now() / 1000;
-const base = { memory_level: "remember", placement: "ear", route: "ear", conversation_id: 7, ring_seconds: 8,
+const base = { live_translation: true, interpreter: { two_way: false, from: "te", to: "en" }, memory_level: "remember", placement: "ear", route: "ear", conversation_id: 7, ring_seconds: 8,
   buds: { battery: { left: 82, right: 79, case: 64 }, wear: { L: "in_ear", R: "in_ear" } },
   models: { chat: "ready", embed: "ready", translate: "unloaded" }, autopilot: { enabled: false, sensitivity: "balanced", feed: [] }, banner: null, self_name: "Me" };
 const STATES = {
@@ -62,7 +62,7 @@ export function initDemo() {
     { src: "te", dst: "en", text: "రేపు మధ్యాహ్నం మన సమావేశం మూడు గంటలకు ఉంటుంది", translated: "Our meeting is at 3 o'clock tomorrow afternoon.", ok: true, p50: 4.4, behind: 0.0 },
     { skipped: true, reason: "echo" },
     { src: "te", dst: "en", text: "మీరు నాకు శుక్రవారం రిపోర్ట్ పంపగలరా", translated: "Can you send me the report on Friday?", ok: true, p50: 4.6, behind: 0.0 }] : [];
-  if (q === "interpreter") { ui.interpreter = { two_way: false }; ui.models.telugu = "ready"; }
+  if (q === "interpreter") { ui.interpreter = { two_way: false, from: "te", to: "en" }; ui.models.telugu = "ready"; }
   set({ ui, connection: "live", people: PEOPLE, peopleLoaded: true, translations, segments: live && q !== "interpreter" ? SEGMENTS : [], decisions: live && q !== "interpreter" ? DECISIONS : [] });
 }
 
@@ -102,7 +102,7 @@ export async function demo(method, path, body) {
     events: [e(1, "Demo prep", "today at 4 pm"), e(2, "Standup", "tomorrow at 10 am", ["Ravi"]), e(3, "Budget review", "Thursday at 2 pm", ["Priya"])],
     todos: [{ id: 1, text: "send the deck", due_text: "Friday", source: "promise" }, { id: 2, text: "Review the Q3 report", due_text: "Friday", source: "manual" }],
     reminders: [{ id: 1, text: "Call mum", when_label: "today at 7 pm" }] }; }
-  if (path === "/api/v2/interpreter") { set({ ui: { ...state.ui, interpreter: { two_way: !!body.two_way } } }); return { two_way: !!body.two_way }; }
+  if (path === "/api/v2/interpreter") { const cur = state.ui.interpreter || { from: "te", to: "en" }; let from = body.src || cur.from, to = body.dst || cur.to; if (from === to) { if (body.src) to = from === "te" ? "en" : "te"; else from = to === "te" ? "en" : "te"; } set({ ui: { ...state.ui, interpreter: { ...cur, from, to } } }); return { from, to }; }
   if (path === "/api/translate") return { ok: true, text: "ధన్యవాదాలు", src: "en", dst: "te" };
   if (path === "/api/v2/activity") return [{ ts: t(60), text: "Switched to Autopilot" }, { ts: t(900), text: "Changed settings" }, { ts: t(7200), text: "Forgot a person (4 lines, 1 notes deleted)" }];
   if (path === "/api/v2/gestures/try") return { on: !!body.on, seconds: 60 };

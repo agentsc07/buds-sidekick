@@ -62,10 +62,11 @@ class Interpreter:
         self.events.publish("translation_skipped", reason=reason, text=ph.text, lang=ph.lang, behind=round(self.behind(), 1))
 
     def _direction(self, ph: Phrase) -> tuple[str, str] | None:
-        if ph.lang == "te":
-            return "te", "en"
-        if ph.lang == "en" and self.cfg.interpreter_two_way and (ph.person_id is None or ph.is_self):
-            return "en", "te"                    # my English, or someone not enrolled: assume it is for the Telugu listener
+        src, dst = getattr(self.cfg, "interpreter_from", "te"), getattr(self.cfg, "interpreter_to", "en")
+        if src != dst and ph.lang == src:
+            return None if (src == "en" and ph.is_self) else (src, dst)      # what they say, translated for me; my own English is not for me
+        if src == "te" and ph.lang == "en" and self.cfg.interpreter_two_way and (ph.person_id is None or ph.is_self):
+            return "en", "te"                    # two-way: my English, or someone not enrolled: assume it is for the Telugu listener
         return None
 
     async def _handle(self, ph: Phrase) -> None:
@@ -103,7 +104,7 @@ class Interpreter:
                             sped_up=behind,
                             stages={"listen_and_recognise": round(max(0.0, ph.submitted - ph.t1), 2), "queued": round(max(0.0, t_translate - ph.submitted), 2),
                                     "translate": round(translate_s, 2)})
-        route = "remote" if dst == "te" else None
+        route = "remote" if (src, dst) == ("en", "te") and getattr(self.cfg, "interpreter_from", "te") == "te" else None      # only two-way speaks out loud on the Mac
         on_mac_speakers = (route or self.output.route) == "remote"
         started = time.time()
         if on_mac_speakers:

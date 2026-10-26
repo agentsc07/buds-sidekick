@@ -91,3 +91,9 @@
 ## STATUS (2026-10-26, end of session)
 - LIVE: repo https://github.com/agentsc07/buds-sidekick (public), Release v1.0.1 (.dmg, native window, no Terminal), site https://site-psi-five-93.vercel.app (+ /demo). The BLOCKED section above is resolved (user ran the login commands).
 - Remaining (user): real-voice clips + rated Autopilot session (docs/validation/recording-script.md), demo video (replace VIDEO_URL in site/index.html, redeploy), try the .dmg end to end.
+
+## Reversal after user feedback (v1.0.2)
+- User wants live Translate back: switch + "They speak" / "I hear" dropdowns (Telugu/English), translated speech in the ear. `live_translation` default now TRUE,
+  `interpreter_from/to` config + `POST /api/v2/interpreter {src,dst}`; typed box shows only when live is off. The scope freeze (Step 1) is superseded: shipped as experimental, latency 5.8-6.6 s documented.
+- App defaulted to practice mode because buds were renamed ("Sai's Buds FE"); detection now matches any connected device with "buds" in its name, and the window menu has
+  "Use my earbuds" / "Practice mode" (remembered in app.json).

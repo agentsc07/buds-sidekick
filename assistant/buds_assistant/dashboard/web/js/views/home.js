@@ -22,6 +22,16 @@ function hero(ui, segs, decisions) {
   }
 }
 
+// Which language they speak and which you hear. Only Telugu and English exist, so choosing the same one on both sides flips the other.
+const LANGS = [["te", "Telugu"], ["en", "English"]];
+function Languages() {
+  const it = useStore((s) => s.ui.interpreter || { from: "te", to: "en" });
+  const set1 = async (body) => { try { await api.post("/api/v2/interpreter", body); } catch (e) { toast(e.message); } };
+  const sel = (label, value, key) => html`<label class="lang"><span class="small muted">${label}</span>
+    <select aria-label=${label} value=${value} onChange=${(e) => set1({ [key]: e.target.value })}>${LANGS.map(([v, n]) => html`<option value=${v} selected=${v === value}>${n}</option>`)}</select></label>`;
+  return html`<div class="langs">${sel("They speak", it.from || "te", "src")}<span class="arrow" aria-hidden="true">→</span>${sel("I hear", it.to || "en", "dst")}</div>`;
+}
+
 // Switches: Listening (the mic), Autopilot (how much I chip in), Translate (live translation). Private is an action, not a mode (see docs/app-map.md).
 function Switches() {
   const [mode, pending, level] = useStore((s) => [s.ui.mode, s.ui.pending_mode, s.ui.autopilot.sensitivity]);
@@ -48,8 +58,9 @@ function Switches() {
   return html`<div class="switches">
     <div class="srow2"><div><b>Listening</b><p class="small muted">${translating ? "Mic on for translating, nothing is saved" : !listening ? "Mic off" : mode === "private" ? "Mic closed" : "Mic on, saving the conversation"}</p></div>
       <${Toggle} checked=${listening} label="Listening" onChange=${(on) => choose(on ? "listen" : "standby")} /></div>
-    ${live && html`<div class="srow2"><div><b>Translate</b><p class="small muted">${pending === "interpreter" ? "Getting ready…" : "Telugu and English, live"}</p></div>
-      <${Toggle} checked=${translating} label="Translate" onChange=${(on) => choose(on ? "interpreter" : "listen")} /></div>`}
+    ${live && html`<div class="srow2"><div><b>Translate</b><p class="small muted">${pending === "interpreter" ? "Getting ready…" : translating ? "Whatever they say, in your ear" : "Hear what they say in your language"}</p></div>
+      <${Toggle} checked=${translating} label="Translate" onChange=${(on) => choose(on ? "interpreter" : "listen")} /></div>
+      <${Languages} />`}
     <div class="autopilot ${translating ? "dim" : ""}"><div class="row"><b>Autopilot</b><span class="spacer"></span></div>
       <${Segmented} label="Autopilot" value=${apLevel} options=${LEVELS} onChange=${setLevel} />
       <p class="small muted">${translating ? "Paused while translating." : LEVEL_HELP[apLevel]}</p></div></div>`;
@@ -98,7 +109,7 @@ export function Home() {
       <${Switches} /><${Actions} /></aside>
     <section class="main4"><div class="convhead"><h2>${translating ? "Translation" : "Conversation"}</h2></div>
       <div class="scroll4">${translating ? html`<${InterpreterPanel} />` : html`<${Conversation} />`}</div>
-      ${!translating && html`<${TranslateBox} />`}
+      ${!translating && !ui.live_translation && html`<${TranslateBox} />`}
       <${AskBar} /></section>
   </div>`;
 }

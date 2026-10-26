@@ -146,3 +146,7 @@
 
 .translatebox { width: 100%; }
 .translatebox input[type=text] { flex: 1; }
+
+.langs { display: flex; align-items: center; gap: var(--s2); padding: 4px 0 2px; }
+.langs .lang { display: grid; gap: 2px; flex: 1; } .langs .arrow { color: var(--muted); padding-top: 16px; }
+.langs select { width: 100%; padding: 8px 10px; border-radius: var(--r2, 10px); border: 1px solid var(--line); background: var(--surface); color: inherit; font: inherit; }

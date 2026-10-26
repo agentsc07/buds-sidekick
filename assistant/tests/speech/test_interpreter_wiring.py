@@ -79,6 +79,6 @@ def test_two_way_can_be_switched_from_the_dashboard(tmp_path):
     c = TestClient(create_app(sk), base_url="http://127.0.0.1:8770")
     r = c.post("/api/v2/interpreter", json={"two_way": True})
     assert r.status_code == 200 and sk.cfg.interpreter_two_way is True
-    assert c.get("/api/v2/state").json()["interpreter"] == {"two_way": True}
+    assert c.get("/api/v2/state").json()["interpreter"] == {"two_way": True, "from": "te", "to": "en"}
     c.post("/api/v2/interpreter", json={"two_way": False})
-    assert c.get("/api/v2/state").json()["interpreter"] == {"two_way": False}
+    assert c.get("/api/v2/state").json()["interpreter"] == {"two_way": False, "from": "te", "to": "en"}

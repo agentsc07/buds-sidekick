@@ -278,8 +278,8 @@ async def test_translating_saves_nothing_even_if_remembering_is_on(tmp_path):
     assert pipe.persist is True
 
 
-async def test_live_translation_is_off_by_default(tmp_path):
-    assert Config(data_dir=tmp_path).live_translation is False
+async def test_live_translation_can_be_switched_off(tmp_path):
+    assert Config(data_dir=tmp_path).live_translation is True
     mc = make(tmp_path)[0]
     mc.cfg.live_translation = False
     with pytest.raises(ValueError):

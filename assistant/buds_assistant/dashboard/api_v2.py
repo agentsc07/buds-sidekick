@@ -57,10 +57,20 @@ def make_router(sk) -> APIRouter:
 
     @r.post("/interpreter")
     async def interpreter(body: dict = Body(...)) -> dict:
-        sk.cfg.interpreter_two_way = bool(body.get("two_way"))
-        sk.store.audit("settings", {"interpreter_two_way": sk.cfg.interpreter_two_way})
+        if "two_way" in body:
+            sk.cfg.interpreter_two_way = bool(body.get("two_way"))
+        src, dst = body.get("src", sk.cfg.interpreter_from), body.get("dst", sk.cfg.interpreter_to)
+        if src not in ("te", "en") or dst not in ("te", "en"):
+            raise HTTPException(400, "Only Telugu and English are supported.")
+        if src == dst:                                   # the same language on both sides would translate nothing: flip the one that did not change
+            if "src" in body:
+                dst = "en" if src == "te" else "te"
+            else:
+                src = "en" if dst == "te" else "te"
+        sk.cfg.interpreter_from, sk.cfg.interpreter_to = src, dst
+        sk.store.audit("settings", {"interpreter_from": src, "interpreter_to": dst, "interpreter_two_way": sk.cfg.interpreter_two_way})
         sk.events.publish("mode", **sk.modes.state())
-        return {"two_way": sk.cfg.interpreter_two_way}
+        return {"two_way": sk.cfg.interpreter_two_way, "from": src, "to": dst}
 
     # ---- autopilot ----------------------------------------------------------------------------------------------
     @r.get("/autopilot")

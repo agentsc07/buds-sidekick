@@ -22,14 +22,12 @@ export function InterpreterPanel() {
   };
   return html`<section class="interp stack" style="gap:var(--s4)">
     <div class="row wrap">
-      <${Segmented} label="Interpreter direction" value=${ui.interpreter?.two_way ? "two" : "one"} onChange=${(v) => setWay(v === "two")}
-        options=${[{ value: "one", label: "Their Telugu, in my ear" }, { value: "two", label: "Two-way: also speak my English" }]} />
+      <span class="small muted">${LANG[ui.interpreter?.from] || "Telugu"} → ${LANG[ui.interpreter?.to] || "English"}, in your ear</span>
       <span class="spacer"></span>
       ${!ready ? html`<span class="pill warn" aria-live="polite"><${Icon} name="alert" />Getting ready: ${m.translate !== "ready" ? "translation model" : "Telugu speech"}…</span>`
         : last ? html`<span class="pill ok num" title="Time from the end of a phrase to the start of its translation">${last.p50}s typical delay${last.behind > 4 ? `, ${last.behind}s behind` : ""}</span>`
         : html`<span class="pill ok">Listening for Telugu and English</span>`}
     </div>
-    ${ui.interpreter?.two_way && html`<p class="small muted">Two-way speaks Telugu out loud on the Mac speakers. Keep the other person within range of the Mac microphone.</p>`}
     <div class="panes">
       <div><h3>What they said</h3>${!rows.length ? html`<p class="muted small">Phrases appear here as they are spoken.</p>` : null}</div>
       <div><h3>What you heard</h3></div>
