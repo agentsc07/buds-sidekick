@@ -66,3 +66,9 @@
 - Creating the GitHub repo and pushing (`gh repo create agentsc07/buds-sidekick --private`, `git push origin submission:main`) was denied by the permission
   classifier ("public data-sharing upload"), so nothing has been published. Also not done for the same reason: Vercel deploy of `site/`, GitHub Release.
 - Local state: branch `submission` (orphan snapshot, ready to push); no remote configured yet.
+
+## Direct app / website (user asked after the GitHub step)
+- A pure website cannot run it (needs mic, Bluetooth, local models). Instead: (1) `site/demo/` is the real dashboard served statically on fixture data
+  ("Try the live demo" on the landing page; copy of `dashboard/web`, re-copy after UI changes); (2) `packaging/build_app.sh` builds `dist/Buds-Sidekick-1.0.0.dmg`
+  (unsigned launcher .app: installs the bundled wheel into its own venv on first run, runs `buds-sidekick setup`, opens the dashboard). Needs Python 3.11+ and Ollama on the Mac.
+  Not py2app/Briefcase: ctranslate2/onnx/sherpa wheels make a frozen bundle fragile; this is the reliable option. Launcher syntax-checked, not run end to end.

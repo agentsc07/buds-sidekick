@@ -1,0 +1,41 @@
+/* Design tokens (v3). Night is the default; Day follows the Mac or the Appearance setting.
+   One expressive thing: the violet to magenta to amber gradient (the orb, the selected mode, the main button). Everything else is quiet glass.
+   Colour is never the only signal (icon + word too). */
+:root {
+  --bg: #0b0a12; --surface: rgb(255 255 255 / .06); --surface-2: rgb(255 255 255 / .09); --solid: #17151f;
+  --ink: #f4f3f8; --ink-2: #a7a4b8; --line: rgb(255 255 255 / .11);
+  --focus: #b7a6ff; --ok: #3dd68c; --warn: #f5b04a; --bad: #ff7a7a;
+  --a1: #7c5cff; --a2: #e04bd2; --a3: #ff8a4c;
+  --grad: linear-gradient(120deg, var(--a1), var(--a2) 55%, var(--a3));
+  --m-standby: #8d8aa3; --m-listen: #4fd8c3; --m-autopilot: #a08bff; --m-interpreter: #ffa95c; --m-private: #c58bd0;
+  --canvas-a: rgb(124 92 255 / .22); --canvas-b: rgb(224 75 210 / .14); --canvas-c: rgb(255 138 76 / .10);
+  --blur: 22px;
+  --sans: ui-sans-serif, -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --serif: var(--sans);
+  --t-s: 0.8125rem; --t-b: 0.9375rem; --t-m: 1.0625rem; --t-l: 1.375rem; --t-xl: 1.75rem; --t-hero: clamp(2rem, 4.6vw, 3.25rem);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+  --r1: 12px; --r2: 20px; --r3: 28px; --r-pill: 999px;
+  --shadow: 0 1px 0 rgb(255 255 255 / .05) inset, 0 12px 40px rgb(0 0 0 / .35);
+  --ease: 160ms cubic-bezier(.2, .7, .2, 1);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f1f3f9; --surface: rgb(255 255 255 / .72); --surface-2: rgb(20 21 26 / .06); --solid: #ffffff;
+    --ink: #14151a; --ink-2: #5d6070; --line: rgb(20 21 26 / .10);
+    --focus: #5b3df5; --ok: #138a55; --warn: #a86200; --bad: #c0392b;
+    --m-standby: #6c6a80; --m-listen: #0b8f7d; --m-autopilot: #5b3df5; --m-interpreter: #b35f00; --m-private: #8a3f99;
+    --canvas-a: rgb(124 92 255 / .20); --canvas-b: rgb(255 138 76 / .14); --canvas-c: rgb(79 216 195 / .16);
+    --shadow: 0 1px 0 rgb(255 255 255 / .8) inset, 0 12px 40px rgb(40 40 80 / .12);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f1f3f9; --surface: rgb(255 255 255 / .72); --surface-2: rgb(20 21 26 / .06); --solid: #ffffff;
+  --ink: #14151a; --ink-2: #5d6070; --line: rgb(20 21 26 / .10);
+  --focus: #5b3df5; --ok: #138a55; --warn: #a86200; --bad: #c0392b;
+  --m-standby: #6c6a80; --m-listen: #0b8f7d; --m-autopilot: #5b3df5; --m-interpreter: #b35f00; --m-private: #8a3f99;
+  --canvas-a: rgb(124 92 255 / .20); --canvas-b: rgb(255 138 76 / .14); --canvas-c: rgb(79 216 195 / .16);
+  --shadow: 0 1px 0 rgb(255 255 255 / .8) inset, 0 12px 40px rgb(40 40 80 / .12);
+  color-scheme: light;
+}

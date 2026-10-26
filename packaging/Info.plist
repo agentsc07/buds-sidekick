@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleName</key><string>Buds Sidekick</string>
+  <key>CFBundleDisplayName</key><string>Buds Sidekick</string>
+  <key>CFBundleIdentifier</key><string>app.budssidekick.launcher</string>
+  <key>CFBundleExecutable</key><string>BudsSidekick</string>
+  <key>CFBundleVersion</key><string>__VERSION__</string>
+  <key>CFBundleShortVersionString</key><string>__VERSION__</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>LSMinimumSystemVersion</key><string>13.0</string>
+  <key>NSMicrophoneUsageDescription</key><string>Buds Sidekick listens through your microphone. Audio never leaves this Mac.</string>
+</dict></plist>
