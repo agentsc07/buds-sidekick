@@ -1,0 +1,64 @@
+{
+  "autopilot_scripted": {
+    "whispers": 8,
+    "as_expected": 8,
+    "precision": 1.0,
+    "note": "rules only, scripted ten-minute conversation with labelled trigger points (no model judgement, no humans)",
+    "measured": "2026-10-26T14:49",
+    "load_average": 4.8
+  },
+  "asr_wer": {
+    "synthetic_en": {
+      "clips": 12,
+      "words": 122,
+      "word_errors": 6,
+      "wer": 0.049
+    },
+    "synthetic_te": {
+      "clips": 4,
+      "words": 21,
+      "word_errors": 2,
+      "wer": 0.095
+    },
+    "measured": "2026-10-26T15:04",
+    "load_average": 6.2
+  },
+  "latency": {
+    "autopilot_whisper": {
+      "runs": 5,
+      "median_s": 2.02,
+      "all_s": [
+        2.07,
+        2.0,
+        2.02,
+        2.05,
+        2.01
+      ]
+    },
+    "ask_model_answer": {
+      "runs": 5,
+      "median_s": 2.1,
+      "all_s": [
+        2.26,
+        1.91,
+        2.0,
+        2.13,
+        2.1
+      ]
+    },
+    "ask_quick_command": {
+      "runs": 5,
+      "median_s": 1.98,
+      "all_s": [
+        2.53,
+        1.93,
+        1.88,
+        2.08,
+        1.98
+      ]
+    },
+    "note": "end of speech to the start of the answer text (spoken playback not included); synthetic voice; load average at start 4.7",
+    "measured": "2026-10-26T15:17",
+    "load_average": 7.3
+  }
+}

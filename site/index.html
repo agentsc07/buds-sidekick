@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buds Sidekick: a private assistant in your ear</title>
+<meta name="description" content="Buds Sidekick listens, knows who is speaking, remembers, whispers help and translates Telugu and English. It runs entirely on your Mac.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%237c5cff'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root { --bg:#0b0a12; --panel:#15131f; --line:#2a2740; --text:#f2f0fa; --muted:#a9a5c0; --accent:#8b6cff; --accent2:#ff7a59; --good:#4ade80; --r:16px; }
+@media (prefers-color-scheme: light) { :root { --bg:#faf9ff; --panel:#fff; --line:#e3e0f2; --text:#171527; --muted:#5e5a78; --accent:#6a45ff; --accent2:#e5502d; --good:#16883f; } }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; background:var(--bg); color:var(--text); font:17px/1.6 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; }
+a { color: var(--accent); }
+.wrap { width:min(1040px, 100% - 32px); margin:0 auto; }
+header.nav { position:sticky; top:0; z-index:5; backdrop-filter:blur(12px); background:color-mix(in srgb, var(--bg) 80%, transparent); border-bottom:1px solid var(--line); }
+.nav .wrap { display:flex; align-items:center; gap:20px; height:56px; }
+.brand { font-weight:700; display:flex; align-items:center; gap:10px; color:var(--text); text-decoration:none; }
+.brand i { width:22px; height:22px; border-radius:7px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:inline-block; }
+.nav nav { margin-left:auto; display:flex; gap:18px; font-size:15px; }
+.nav nav a { color:var(--muted); text-decoration:none; } .nav nav a:hover { color:var(--text); }
+.hero { padding:88px 0 56px; text-align:center; }
+.hero h1 { font-size:clamp(34px, 6vw, 60px); line-height:1.08; margin:0 0 18px; letter-spacing:-0.02em; }
+.hero h1 em { font-style:normal; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero p { font-size:20px; color:var(--muted); max-width:640px; margin:0 auto 28px; }
+.btn { display:inline-block; padding:12px 22px; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; font-weight:600; text-decoration:none; margin:4px; }
+.btn.alt { background:transparent; color:var(--text); border:1px solid var(--line); }
+section { padding:56px 0; border-top:1px solid var(--line); }
+h2 { font-size:30px; letter-spacing:-0.01em; margin:0 0 8px; }
+.lead { color:var(--muted); margin:0 0 28px; max-width:680px; }
+.grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:20px; }
+.card h3 { margin:0 0 6px; font-size:18px; } .card p { margin:0; color:var(--muted); font-size:15.5px; }
+.video { aspect-ratio:16/9; border-radius:var(--r); border:1px dashed var(--line); background:var(--panel); display:grid; place-items:center; text-align:center; color:var(--muted); overflow:hidden; }
+.video iframe { width:100%; height:100%; border:0; }
+.stat { text-align:center; } .stat b { display:block; font-size:38px; line-height:1.1; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat span { color:var(--muted); font-size:14.5px; }
+table { width:100%; border-collapse:collapse; font-size:15px; } th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); } th { color:var(--muted); font-weight:600; }
+.note { color:var(--muted); font-size:14px; margin-top:12px; }
+pre { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow-x:auto; font-size:14.5px; line-height:1.5; }
+code { font-family:ui-monospace, "SF Mono", Menlo, monospace; font-size:.92em; }
+.diagram { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:12px; } .diagram svg { width:100%; height:auto; display:block; }
+.privacy { display:grid; gap:12px; } .privacy li { margin:0 0 6px; }
+footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--muted); font-size:14.5px; }
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top"><i></i>Buds Sidekick</a>
+  <nav><a href="#demo">Demo</a><a href="#how">How it works</a><a href="#results">Results</a><a href="#install">Install</a><a href="#privacy">Privacy</a></nav>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+  <h1>A private assistant <em>in your ear</em></h1>
+  <p>It listens, knows who is speaking, remembers what they said, whispers help at the right moment and translates Telugu and English. Everything runs on your Mac.</p>
+  <a class="btn" href="#install">Install it</a><a class="btn alt" href="#demo">Watch the demo</a>
+</div>
+
+<section id="demo"><div class="wrap">
+  <h2>Two minutes</h2>
+  <p class="lead">Listen, who is talking, Ask, an Autopilot whisper, and Telugu to English.</p>
+  <div class="video" id="video"><!-- VIDEO_URL: replace this block with <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> -->
+    <div><b>Demo video coming soon</b><br><small>A 2-minute screen recording will appear here.</small></div></div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What it does</h2>
+  <p class="lead">Built for Galaxy Buds FE on a MacBook. No account, no cloud.</p>
+  <div class="grid">
+    <div class="card"><h3>Listen</h3><p>Live transcript with a name on every line, and a rolling replay so you never miss "what did they just say?"</p></div>
+    <div class="card"><h3>Who is talking</h3><p>Voice identity from a few seconds of enrolment. Unknown voices are never stored.</p></div>
+    <div class="card"><h3>Ask</h3><p>Questions answered from your own calendar, to-dos and what people actually said, with the source line.</p></div>
+    <div class="card"><h3>Autopilot</h3><p>A short whisper when it helps: your promises noted, a stored commitment, a name briefed. Every whisper and every silence has a reason.</p></div>
+    <div class="card"><h3>Translate</h3><p>English and Telugu, typed or spoken, with a Telugu voice. Live voice-to-voice translation is experimental.</p></div>
+    <div class="card"><h3>Private by design</h3><p>One tap to go private: the mic closes and nothing is kept.</p></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2>How it works</h2>
+  <p class="lead">Audio goes in, is understood on-device, and the answer comes back as a whisper. The only thing that leaves the Mac is nothing.</p>
+  <div class="diagram">
+  <svg viewBox="0 0 980 360" role="img" aria-label="Architecture: buds and Mac mic feed a segmenter, then speaker identity and speech recognition, then memory and Autopilot, then a whisper in the ear or the dashboard">
+    <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8b6cff"/></marker></defs>
+    <g font-family="-apple-system, Inter, sans-serif" font-size="15" fill="currentColor">
+      <g stroke="#8b6cff" stroke-width="1.6" fill="none">
+        <rect x="10" y="40" width="150" height="70" rx="14"/><rect x="10" y="230" width="150" height="70" rx="14"/>
+        <rect x="215" y="135" width="150" height="90" rx="14"/>
+        <rect x="420" y="40" width="170" height="70" rx="14"/><rect x="420" y="135" width="170" height="90" rx="14"/><rect x="420" y="250" width="170" height="70" rx="14"/>
+        <rect x="650" y="95" width="150" height="80" rx="14"/><rect x="650" y="205" width="150" height="80" rx="14"/>
+        <rect x="840" y="135" width="130" height="90" rx="14"/>
+      </g>
+      <g stroke="#8b6cff" stroke-width="1.6" fill="none" marker-end="url(#a)">
+        <path d="M160 75 L215 160"/><path d="M160 265 L215 200"/><path d="M365 160 L420 75"/><path d="M365 180 L420 180"/><path d="M365 205 L420 285"/>
+        <path d="M590 75 L650 120"/><path d="M590 180 L650 150"/><path d="M590 285 L650 245"/><path d="M800 135 L840 160"/><path d="M800 245 L840 205"/>
+      </g>
+      <text x="85" y="70" text-anchor="middle">Galaxy Buds</text><text x="85" y="90" text-anchor="middle" font-size="13" opacity=".7">mic, taps, wear</text>
+      <text x="85" y="260" text-anchor="middle">Mac mic</text><text x="85" y="280" text-anchor="middle" font-size="13" opacity=".7">remote mode</text>
+      <text x="290" y="175" text-anchor="middle">Segmenter</text><text x="290" y="195" text-anchor="middle" font-size="13" opacity=".7">voice activity</text>
+      <text x="505" y="70" text-anchor="middle">Who is speaking</text><text x="505" y="90" text-anchor="middle" font-size="13" opacity=".7">TitaNet voiceprints</text>
+      <text x="505" y="175" text-anchor="middle">What was said</text><text x="505" y="195" text-anchor="middle" font-size="13" opacity=".7">Whisper (EN) and Telugu</text>
+      <text x="505" y="280" text-anchor="middle">Memory</text><text x="505" y="300" text-anchor="middle" font-size="13" opacity=".7">SQLite + embeddings</text>
+      <text x="725" y="130" text-anchor="middle">Autopilot</text><text x="725" y="150" text-anchor="middle" font-size="13" opacity=".7">rules + model judge</text>
+      <text x="725" y="240" text-anchor="middle">Ask and Translate</text><text x="725" y="260" text-anchor="middle" font-size="13" opacity=".7">local LLM (Ollama)</text>
+      <text x="905" y="175" text-anchor="middle">Whisper</text><text x="905" y="195" text-anchor="middle" font-size="13" opacity=".7">ear + dashboard</text>
+    </g>
+  </svg></div>
+  <p class="note">Models: NeMo TitaNet (speaker), faster-whisper small.en and a Telugu Whisper (speech), Gemma 4 12B via Ollama (answers, judgement, translation).</p>
+</div></section>
+
+<section id="results"><div class="wrap">
+  <h2>Results</h2>
+  <p class="lead">Measured on a MacBook Air M3 (16 GB). Synthetic voices are a floor, not real people; rows say which is which.</p>
+  <div class="grid" id="stats">
+    <div class="stat card"><b>1.7%</b><span>speaker error (EER), TitaNet, mixed enrolment, synthetic voices</span></div>
+    <div class="stat card"><b data-k="wer_en">…</b><span>English word error, synthetic clips</span></div>
+    <div class="stat card"><b data-k="wer_te">…</b><span>Telugu word error, synthetic clips</span></div>
+    <div class="stat card"><b data-k="ap">…</b><span>Autopilot precision, scripted 10-minute conversation</span></div>
+  </div>
+  <h3 style="margin-top:32px">Speaker identification (equal error rate, lower is better)</h3>
+  <table><thead><tr><th>Model</th><th>Clean enrolment only</th><th>Clean + buds-like enrolment</th></tr></thead><tbody>
+    <tr><td>WeSpeaker ResNet34</td><td>29.3%</td><td>7.1%</td></tr><tr><td>WeSpeaker ResNet293</td><td>42.5%</td><td>9.3%</td></tr>
+    <tr><td>3D-Speaker CAM++</td><td>34.1%</td><td>28.8%</td></tr><tr><td><b>NeMo TitaNet-small (used)</b></td><td><b>12.4%</b></td><td><b>2.0%</b></td></tr></tbody></table>
+  <h3 style="margin-top:32px">Latency, end of speech to start of the answer</h3>
+  <table><thead><tr><th>Path</th><th>Median</th><th>Runs</th></tr></thead><tbody id="lat"><tr><td colspan="3">…</td></tr></tbody></table>
+  <p class="note" id="resnote">Full method and caveats in the <a href="https://github.com/agentsc07/buds-sidekick/blob/main/docs/report.md">report</a>. Speaker accuracy on real people and Telugu from real speakers are still being measured.</p>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <h2>Install</h2>
+  <p class="lead">macOS 13 or later on Apple silicon, 16 GB of memory, Python 3.11+. Galaxy Buds are optional: try it with <code>--simulate</code>.</p>
+<pre><code># 1. Get Ollama (the local language models): https://ollama.com/download
+
+# 2. Install Buds Sidekick
+brew install pipx &amp;&amp; pipx ensurepath
+pipx install "git+https://github.com/agentsc07/buds-sidekick.git"
+
+# 3. Download the models (once, a few GB) and check everything
+buds-sidekick setup
+
+# 4. Run: no buds needed with --simulate
+buds-sidekick --simulate
+# then open http://127.0.0.1:8770</code></pre>
+  <p class="note">With buds: turn Bluetooth off on your phone first (the buds talk to one device), connect them to the Mac, then run <code>buds-sidekick</code>.</p>
+</div></section>
+
+<section id="privacy"><div class="wrap">
+  <h2>Privacy: everything runs locally</h2>
+  <ul class="privacy">
+    <li>Speech recognition, voice identity, memory and the language models all run on your Mac. There is no account and no cloud service.</li>
+    <li>The dashboard only accepts requests from your own computer.</li>
+    <li>Unknown voices are never saved; Telugu transcripts are never saved; Translate keeps nothing; <b>Go private</b> closes the mic and wipes the replay buffer.</li>
+    <li><b>Forget</b> a person and their voiceprint, transcripts, audio and facts are deleted, with exact counts shown.</li>
+    <li>Not done yet: encryption at rest (files are protected by your macOS account only).</li>
+  </ul>
+</div></section>
+</main>
+
+<footer><div class="wrap">Buds Sidekick, an Applied AI and Data Science project. <a href="https://github.com/agentsc07/buds-sidekick">Source on GitHub</a>. Not affiliated with Samsung.</div></footer>
+
+<script>
+fetch("results.json").then(r => r.json()).then(d => {
+  const pct = x => (x * 100).toFixed(1) + "%", set = (k, v) => document.querySelectorAll(`[data-k="${k}"]`).forEach(e => e.textContent = v);
+  set("wer_en", d.asr_wer?.synthetic_en ? pct(d.asr_wer.synthetic_en.wer) : "n/a"); set("wer_te", d.asr_wer?.synthetic_te ? pct(d.asr_wer.synthetic_te.wer) : "n/a");
+  set("ap", d.autopilot_scripted ? Math.round(d.autopilot_scripted.precision * 100) + "%" : "n/a");
+  const L = d.latency || {}, names = { autopilot_whisper: "Autopilot whisper", ask_model_answer: "Ask (language model)", ask_quick_command: "Ask (quick command)" };
+  document.getElementById("lat").innerHTML = Object.keys(names).filter(k => L[k]).map(k => `<tr><td>${names[k]}</td><td>${L[k].median_s ?? "n/a"} s</td><td>${L[k].runs}</td></tr>`).join("") || "<tr><td colspan=3>Not measured yet</td></tr>";
+}).catch(() => {});
+</script>
+</body>
+</html>

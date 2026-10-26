@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buds Sidekick</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Buds Sidekick</h1>
+  <span id="pill-mode" class="pill">standby</span>
+  <span id="pill-place" class="pill">ear</span>
+  <span id="pill-link" class="pill">…</span>
+  <span id="pill-llm" class="pill">llm</span>
+  <span id="pill-bat" class="pill muted">battery –</span>
+  <span class="spacer"></span>
+  <nav id="nav">
+    <button data-view="live" class="active">Live</button>
+    <button data-view="people">People</button>
+    <button data-view="conversations">Conversations</button>
+    <button data-view="memory">Memory</button>
+    <button data-view="translate">Translate</button>
+    <button data-view="settings">Settings</button>
+    <button data-view="privacy">Privacy</button>
+  </nav>
+</header>
+<div id="toast" role="status"></div>
+
+<main>
+<!-- LIVE -->
+<section id="view-live" class="view active">
+  <div class="cols">
+    <div class="col">
+      <div class="card">
+        <h2>Mode</h2>
+        <div class="seg" id="mode-btns">
+          <button data-mode="standby">Standby</button><button data-mode="listen">Listen</button>
+          <button data-mode="autopilot">Autopilot</button><button data-mode="interpreter">Interpreter</button><button data-mode="private">Private</button>
+        </div>
+        <p class="small muted" id="mode-help"></p>
+        <div class="row"><label class="small">Buds placement</label>
+          <select id="place-sel"><option value="auto">auto (from wear state)</option><option value="ear">in ear</option><option value="remote">remote (out of ears)</option></select></div>
+        <div class="row small muted" id="sim-wear" hidden>Simulate wear:
+          <label><input type="checkbox" id="wear-l" checked> left in</label><label><input type="checkbox" id="wear-r" checked> right in</label></div>
+        <div class="small" id="route-line"></div>
+        <div class="meter"><i id="ring-bar"></i></div><div class="small muted" id="ring-text">replay buffer 0 s</div>
+      </div>
+      <div class="card">
+        <h2>Quick actions</h2>
+        <div class="row wrap">
+          <button id="b-replay" class="primary">Replay</button><button id="b-replay-fast">Replay 1.25×</button>
+          <button id="b-mark">Mark</button><button id="b-who">Who is talking?</button><button id="b-catch">Catch me up</button>
+          <button id="b-stop">Stop audio</button>
+        </div>
+        <div class="row"><input id="ask-text" placeholder='Ask: "what did Ravi say about the budget?"'><button id="ask-go" class="primary">Ask</button></div>
+        <div class="row small muted" id="sim-demo" hidden><button id="b-demo">Play demo conversation</button> <span>3 synthetic voices; enrol "Me" and "Ravi" first (People › demo voices).</span></div>
+      </div>
+      <div class="card">
+        <h2>Buds gestures <span class="small muted" id="gesture-profile"></span></h2>
+        <div class="gpad" id="gpad"></div>
+        <table id="tbl-gestures"><thead><tr><th>gesture</th><th>does</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="col wide">
+      <div class="card">
+        <h2>Live transcript <span class="small muted" id="live-info"></span></h2>
+        <div id="transcript" class="transcript"></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h2>Hints</h2><div id="hints" class="list"></div></div>
+        <div class="card"><h2>Assistant replies</h2><div id="replies" class="list"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PEOPLE -->
+<section id="view-people" class="view">
+  <div class="card">
+    <h2>Enrol a voice</h2>
+    <p class="small muted">Only enrol someone who knows and agrees. A consent note is required and kept in the audit log. Speak (or have them speak) naturally for ~12 seconds; repeat to add samples.</p>
+    <div class="row wrap"><input id="en-name" placeholder="Name"><input id="en-consent" placeholder="Consent note (e.g. verbal consent 1 Oct)" size="34">
+      <input id="en-secs" type="number" value="12" min="3" max="60" style="width:70px"> s
+      <button id="en-go" class="primary">Record &amp; enrol</button><button id="en-demo">Add demo voices (Me, Ravi)</button></div>
+    <div id="en-msg" class="small muted"></div>
+  </div>
+  <div class="card"><h2>People</h2>
+    <div class="tablewrap"><table id="tbl-people"><thead><tr><th></th><th>Name</th><th>Samples</th><th>Said</th><th>Last seen</th><th>Keep</th><th>Retention (days)</th><th></th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<!-- CONVERSATIONS -->
+<section id="view-conversations" class="view">
+  <div class="cols"><div class="col"><div class="card"><h2>Conversations</h2><div id="conv-list" class="list"></div></div></div>
+  <div class="col wide"><div class="card"><div class="row"><h2 style="margin:0">Transcript</h2><span class="spacer"></span><button id="conv-extract">Extract facts &amp; commitments</button></div><div id="conv-detail" class="transcript"></div></div></div></div>
+</section>
+
+<!-- MEMORY -->
+<section id="view-memory" class="view">
+  <div class="card"><h2>Search what people said</h2>
+    <div class="row"><input id="mem-q" placeholder="e.g. budget, report, Friday"><select id="mem-person"><option value="">anyone</option></select><button id="mem-go" class="primary">Search</button></div>
+    <div id="mem-results" class="list"></div></div>
+  <div class="grid2">
+    <div class="card"><h2>Open commitments</h2><div id="commits" class="list"></div></div>
+    <div class="card"><h2>Dossier</h2><div class="row"><select id="dos-person"></select><button id="dos-go">Show</button></div><div id="dossier" class="small"></div></div>
+  </div>
+</section>
+
+<!-- TRANSLATE -->
+<section id="view-translate" class="view">
+  <div class="card"><h2>English ⇄ Telugu</h2>
+    <div class="warn small">Telugu <b>speech</b> recognition uses a Telugu-tuned Whisper: correct on clean synthetic speech (the only test so far), unverified on real voices, and its transcripts are never stored. Turn on <b>telugu stt</b> and <b>interpreter</b> in Settings to hear English whispered for Telugu speech. Say "translate to Telugu: …" or use the boxes below.</div>
+    <div class="grid2">
+      <div><label class="small">Input</label><textarea id="tr-in" rows="6" placeholder="English or Telugu text"></textarea></div>
+      <div><label class="small">Translation <span id="tr-meta" class="muted"></span></label><textarea id="tr-out" rows="6" readonly></textarea></div>
+    </div>
+    <div class="row wrap"><button data-dst="te" class="primary tr-go">→ Telugu</button><button data-dst="en" class="primary tr-go">→ English</button>
+      <label class="small"><input type="checkbox" id="tr-speak"> speak the result</label><button id="tr-last">Use last thing I heard</button></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="view-settings" class="view">
+  <div class="card"><h2>Settings</h2><div id="settings-form" class="form"></div><div class="row"><button id="set-save" class="primary">Save</button><span class="small muted" id="set-msg"></span></div></div>
+</section>
+
+<!-- PRIVACY -->
+<section id="view-privacy" class="view">
+  <div class="card"><h2>Privacy</h2><ul class="small">
+    <li>Everything runs on this Mac: speech recognition, speaker identity, memory, language models. Nothing is sent anywhere.</li>
+    <li>The replay buffer lives in RAM only and is wiped by Private mode and on exit.</li>
+    <li>Unknown voices are never stored. You can name them during the conversation, which stores what they said.</li>
+    <li>Forgetting a person deletes their voiceprint, transcripts, audio, facts and hints.</li>
+    <li>Recording or identifying people without consent is illegal in many places. Enrolment requires a consent note.</li></ul></div>
+  <div class="grid2">
+    <div class="card"><h2>Audit log</h2><div class="tablewrap"><table id="tbl-audit"><thead><tr><th>time</th><th>event</th><th>detail</th></tr></thead><tbody></tbody></table></div></div>
+    <div class="card"><h2>Hints log</h2><div class="tablewrap"><table id="tbl-hints"><thead><tr><th>time</th><th>trigger</th><th>hint</th><th>rating</th></tr></thead><tbody></tbody></table></div></div>
+  </div>
+</section>
+</main>
+
+<div id="modal" class="modal" hidden><div class="modal-box"><h3 id="m-title"></h3><p id="m-text" class="small"></p>
+  <div id="m-fields"></div><div class="row"><button id="m-cancel">Cancel</button><button id="m-ok" class="primary">OK</button></div></div></div>
+<script src="app.js"></script>
+</body>
+</html>

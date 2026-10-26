@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buds FE Capability Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Buds FE Capability Lab</h1>
+  <span id="pill-link" class="pill">connecting…</span>
+  <span id="pill-mode" class="pill mode"></span>
+  <span id="pill-cmd" class="pill">read-only</span>
+  <span class="spacer"></span>
+  <span id="hdr-progress" class="muted"></span>
+  <nav id="nav">
+    <button data-view="live" class="active">Live</button>
+    <button data-view="commands">Commands</button>
+    <button data-view="mic">Mic</button>
+    <button data-view="guided">Guided tests</button>
+    <span class="navsep">advanced:</span>
+    <button data-view="metrics" class="adv">Metrics</button>
+    <button data-view="protocol" class="adv">Protocol</button>
+    <button data-view="report" class="adv">Report</button>
+  </nav>
+</header>
+<div id="toast" role="status"></div>
+
+<main>
+<!-- ================= LIVE ================= -->
+<section id="view-live" class="view active">
+  <div class="grid live-top" style="grid-template-columns:1fr">
+    <div class="card" id="devcard">
+      <h2>Device</h2>
+      <div class="dev-row"><span class="lbl">Battery</span>
+        <div class="bat"><span>L</span><div class="bar"><i id="bat-l"></i></div><b id="bat-l-t">–</b></div>
+        <div class="bat"><span>R</span><div class="bar"><i id="bat-r"></i></div><b id="bat-r-t">–</b></div>
+        <div class="bat"><span>Case</span><div class="bar"><i id="bat-c"></i></div><b id="bat-c-t">–</b></div>
+      </div>
+      <div class="dev-row"><span class="lbl">Wear</span><span id="w-l" class="chip">L –</span><span id="w-r" class="chip">R –</span>
+        <span class="lbl">Noise</span><span id="d-anc" class="chip">–</span>
+        <span class="lbl">Touchpad</span><span id="d-lock" class="chip">–</span></div>
+      <div class="dev-row small muted" id="layer-a-status"></div>
+    </div>
+
+  </div>
+  <div class="card">
+    <h2>Signals detected so far</h2>
+    <div class="muted small">Everything the buds have told this app in this session, decoded. Tap, wear, open the case, change noise mode… and watch rows appear.</div>
+    <div class="tablewrap"><table id="tbl-seen"><thead><tr><th>Signal</th><th>Side</th><th>Count</th><th>Last (s)</th><th>Detail</th></tr></thead><tbody></tbody></table></div>
+    <div id="seen-unk" class="muted small" style="margin-top:6px"></div>
+  </div>
+  <div class="card">
+    <div class="feed-head"><h2>Live feed</h2>
+      <label class="small"><input type="checkbox" id="feed-battery"> battery</label>
+      <label class="small"><input type="checkbox" id="feed-unknown"> undecoded frames</label>
+      <label class="small"><input type="checkbox" id="feed-system" checked> system</label>
+    </div>
+    <div id="feed" class="feed"></div>
+  </div>
+</section>
+
+<!-- ================= MIC ================= -->
+<section id="view-mic" class="view">
+  <div class="card">
+    <h2>Record from the buds' microphone</h2>
+    <p class="muted small">Audio comes over standard Bluetooth (headset profile), not the control channel. Select the buds as the input in
+    System Settings › Sound if they are not listed. While the mic is open, sound in your ears drops to phone-call quality.
+    Allow microphone access for your terminal when macOS asks. Files are saved locally.</p>
+    <div class="btnrow"><select id="mic-dev"></select><button id="mic-refresh">Refresh devices</button><span id="mic-msg" class="muted small"></span></div>
+    <div class="btnrow"><input id="mic-label" placeholder="label" value="test" style="max-width:160px"><input id="mic-secs" type="number" min="1" max="60" value="5" style="max-width:70px"> s
+      <button id="mic-rec" class="primary">Record</button>
+      <button id="mic-level">Run level test (silence, whisper, normal, loud)</button></div>
+    <div id="mic-prompt" class="act-instr"></div>
+  </div>
+  <div class="card"><h2>Results</h2>
+    <div class="tablewrap"><table id="tbl-mic"><thead><tr><th>Label</th><th>Input</th><th>Rate</th><th>Bandwidth</th><th>Speech level</th><th>Noise floor</th><th>SNR</th><th>Peak</th><th>Verdict</th><th>Play</th></tr></thead><tbody></tbody></table></div>
+    <div class="muted small">dBFS: 0 is the loudest possible. SNR = speech level minus noise floor; about 15 dB is the minimum for reliable speech recognition, 25+ is good.
+    Bandwidth ~4 kHz means 8 kHz narrowband, ~8 kHz means 16 kHz wideband.</div>
+  </div>
+</section>
+
+<!-- ================= METRICS ================= -->
+<section id="view-metrics" class="view">
+  <div class="grid counters">
+    <div class="card counter"><b id="c-events">0</b><span>events</span></div>
+    <div class="card counter"><b id="c-ids">0</b><span>unique message IDs</span></div>
+    <div class="card counter"><b id="c-rx">0</b><span>frames rx</span></div>
+    <div class="card counter"><b id="c-tx">0</b><span>frames tx</span></div>
+    <div class="card counter wide"><b id="c-prog-t">0 / 0</b><span>experiments verified</span><div class="bar big"><i id="c-prog"></i></div></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><h2>Battery over time</h2><div class="chartbox"><canvas id="ch-battery"></canvas></div></div>
+    <div class="card"><h2>Wear state (L / R)</h2><canvas id="ch-wear" height="90"></canvas><div class="legend"><i class="k in"></i>in ear <i class="k out"></i>out <i class="k case"></i>in case <i class="k dis"></i>disconnected</div>
+      <h2 style="margin-top:16px">Touch / media-key counters</h2><div id="touch-counts"></div></div>
+  </div>
+  <div class="card"><h2>Event timeline</h2><div class="chartbox tall"><canvas id="ch-swim"></canvas></div></div>
+  <div class="grid two">
+    <div class="card"><h2>Message rate (rx / tx per second)</h2><div class="chartbox"><canvas id="ch-rate"></canvas></div></div>
+    <div class="card"><h2>Messages by ID (5 s bins)</h2><div class="chartbox"><canvas id="ch-ids"></canvas></div></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><h2>Command latency (round trip)</h2><div class="chartbox"><canvas id="ch-lat"></canvas></div></div>
+    <div class="card"><h2>Latency histogram</h2><div class="chartbox"><canvas id="ch-lat-h"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ================= EXPERIMENTS ================= -->
+<section id="view-guided" class="view">
+    <div class="card action" style="margin-bottom:14px" id="actioncard">
+      <div class="action-head"><h2>Guided action</h2><span id="act-state" class="pill">idle</span></div>
+      <div id="act-title" class="act-title">No experiment running</div>
+      <div id="act-instr" class="act-instr">Choose a category and press <b>Start guided run</b>.</div>
+      <div id="act-warn" class="warn" hidden></div>
+      <div id="act-freeform" hidden><input id="freeform-text" placeholder="Describe what you are about to do…"></div>
+      <div class="countdown"><div id="cd-bar"></div><span id="cd-text"></span></div>
+      <div id="act-signal" class="signal muted">Waiting…</div>
+      <div class="btnrow">
+        <select id="run-cat"></select>
+        <button id="btn-start" class="primary">Start guided run</button>
+        <button id="btn-confirm" class="danger" hidden>Confirm &amp; go</button>
+        <button id="btn-skip">Skip</button>
+        <button id="btn-retry">Retry</button>
+        <button id="btn-verify">Mark verified</button>
+        <button id="btn-extend">+ time</button>
+        <button id="btn-abort">Stop run</button>
+      </div>
+      <div class="btnrow"><input id="note-text" placeholder="Add a note to this experiment…"><button id="btn-note">Add note</button>
+        <label class="small"><input type="checkbox" id="sound-on" checked> sound</label></div>
+    </div>
+  <div class="card"><div class="btnrow"><h2 style="margin:0">Catalog</h2><span class="spacer"></span>
+    <span class="muted small">from experiments.yaml</span><button id="btn-reload">Reload catalog</button></div>
+    <div id="exp-list"></div></div>
+</section>
+
+<!-- ================= PROTOCOL ================= -->
+<section id="view-protocol" class="view">
+  <div class="card">
+    <h2>Raw traffic</h2>
+    <div class="btnrow filters">
+      <select id="f-dir"><option value="">rx + tx</option><option value="rx">rx</option><option value="tx">tx</option></select>
+      <select id="f-layer"><option value="">all layers</option><option>A</option><option>B</option><option>C</option></select>
+      <input id="f-id" placeholder="msg id" size="6">
+      <input id="f-text" placeholder="filter hex / name" size="18">
+      <label class="small"><input type="checkbox" id="f-unknown"> undecoded only</label>
+      <span class="muted small" id="f-count"></span>
+    </div>
+    <div class="tablewrap"><table id="tbl-frames"><thead><tr><th>t (s)</th><th>dir</th><th>layer</th><th>id</th><th>name</th><th>len</th><th>crc</th><th>payload (hex)</th><th></th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><h2>Unknown messages</h2><div class="muted small">Undecoded IDs, listen-only. "Active during" is the experiment that was armed when it arrived.</div>
+      <div class="tablewrap"><table id="tbl-unknown"><thead><tr><th>ID</th><th>count</th><th>first / last</th><th>examples</th><th>active during</th></tr></thead><tbody></tbody></table></div></div>
+    <div class="card"><h2>Message ID frequency</h2><div class="chartbox"><canvas id="ch-freq"></canvas></div></div>
+  </div>
+  <div class="card"><h2>Discovery</h2>
+    <div class="btnrow"><button id="btn-sdp">Show SDP services</button><button id="btn-ble">BLE scan (10 s)</button></div>
+    <pre id="discovery-out" class="pre muted">SDP records are captured when the RFCOMM link is established. The BLE scan records whether the buds advertise anything.</pre></div>
+</section>
+
+<!-- ================= COMMANDS ================= -->
+<section id="view-commands" class="view">
+  <div class="card">
+    <h2>Command sending</h2>
+    <label class="toggle"><input type="checkbox" id="cmd-enable"> <b>Enable sending commands</b> (off = read-only, the default)</label>
+    <p class="muted small">Only allowlisted settings commands can be sent. Firmware update, reset, key/pairing dumps, debug modes and
+    anything else are not implemented and are blocked in code. Unknown messages are never replayed or fuzzed.</p>
+  </div>
+  <div id="cmd-cards" class="grid two"></div>
+  <div class="card"><h2>Responses</h2>
+    <div class="tablewrap"><table id="tbl-cmd"><thead><tr><th>t (s)</th><th>command</th><th>args</th><th>result</th><th>latency (ms)</th></tr></thead><tbody></tbody></table></div></div>
+  <div id="modal" class="modal" hidden><div class="modal-box"><h3 id="modal-title">Confirm</h3><p id="modal-text"></p>
+    <div class="btnrow"><button id="modal-cancel">Cancel</button><button id="modal-ok" class="danger">I understand, send</button></div></div></div>
+</section>
+
+<!-- ================= REPORT ================= -->
+<section id="view-report" class="view">
+  <div class="card">
+    <div class="btnrow"><h2 style="margin:0">Capability matrix</h2><span class="spacer"></span>
+      <label class="small"><input type="checkbox" id="rep-sim"> include simulated sessions</label>
+      <button id="btn-rep-refresh">Refresh</button><button id="btn-export" class="primary">Export files</button>
+      <a class="btn" href="/api/export/capabilities.json" download>Download JSON</a>
+      <a class="btn" href="/api/export/capabilities.md" download>Download Markdown</a></div>
+    <div id="export-out" class="muted small"></div>
+    <div id="rep-obs" class="small"></div>
+    <div class="tablewrap"><table id="tbl-report"><thead><tr><th>Capability</th><th>Cat</th><th>Layer</th><th>How to trigger</th><th>Signal seen</th><th>Reliability</th><th>Status</th><th>Notes</th></tr></thead><tbody></tbody></table></div>
+    <h3>Commands</h3>
+    <div class="tablewrap"><table id="tbl-report-cmd"><thead><tr><th>Command</th><th>Attempts</th><th>Acked</th><th>Rejected</th><th>No response</th><th>Median ms</th><th>Max ms</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+</main>
+
+<script src="vendor/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

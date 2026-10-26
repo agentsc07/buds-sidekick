@@ -1,0 +1,15 @@
+# Sidekick v2 gesture map. Same in the ear and as a remote (buds out). Left = talk to the assistant, right = control the session.
+# Contextual gestures (stop / tell me more / not useful / undo / catch me up) are handled in context.py, not here.
+sequence_timeout: 0.7
+hold_debounce: 1.2
+
+bindings:
+  - {name: ask,         gesture: "L:single", action: ask}
+  - {name: replay,      gesture: "L:double", action: replay}
+  - {name: private,     gesture: "L:triple", action: private_toggle}
+  - {name: interpreter, gesture: "L:hold", mode: toggle, action: interpreter_toggle}
+  - {name: mark,        gesture: "R:single", action: mark}
+  - {name: autopilot,   gesture: "R:double", action: autopilot_toggle}
+  - {name: who,         gesture: "R:triple", action: who}
+  - {name: listen,      gesture: "R:hold", mode: toggle, action: listen_toggle}
+# remote_bindings omitted on purpose: load_profiles reuses `bindings` for the remote profile.

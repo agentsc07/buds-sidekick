@@ -1,0 +1,12 @@
+# Sidekick settings (everything has a default; uncomment to override). Also editable in the dashboard › Settings.
+# ring_seconds: 8            # replay window, 5-60 s, RAM only
+# speaker_threshold: 0.62    # TUNE THIS with real voices (see docs/validation/phase0.md); synthetic voices are not representative
+# self_min_confidence: 0.8   # a voice counts as "you" only at this score
+# chat_model: qwen3.5:4b-mlx
+# translate_model: gemma4:12b-mlx
+# whisper_model: base.en
+# telugu_stt: false          # Telugu-tuned Whisper (loads on first Telugu speech)
+# interpreter: false         # whisper English for Telugu speech
+# placement: auto            # auto (from wear state) | ear | remote
+# store_unknown: false       # never persist unknown voices
+# hints_per_hour: 12

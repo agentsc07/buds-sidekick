@@ -1,0 +1,346 @@
+# Buds FE Capability Lab: action catalog.
+#
+# Add your own entries freely; the file is re-read on "Reload catalog" / restart.
+#
+# Fields per experiment
+#   id, title, instruction, category, risk (safe | audible | changes-settings), timeout_seconds (default 15)
+#   expected_signals : list. EVERY item must be seen for VERIFIED. An item is either a matcher or
+#                      {any_of: [matcher, ...]}. Empty list = pure observation (never VERIFIED by itself).
+#   forbidden_signals: optional matchers that must NOT appear (used for "expect suppression").
+#   command / undo   : optional allowlisted command to send when you confirm ({name, args}); the
+#                      runner restores the previous value afterwards when `undo: true`.
+#   freeform         : true -> UI shows a text box for your own description instead of a fixed action.
+#
+# Matcher keys: layer (A|B|C), type, side (L|R), source, msg_id, data {key: value | [values]},
+#   min_count (default 1). Signals that arrive as part of the very first status snapshot are ignored.
+#
+# Result states: VERIFIED, PARTIAL, UNKNOWN_SIGNAL, NOT_OBSERVED, SKIPPED.
+#
+# Note on touch: on the FE, taps arrive over RFCOMM as message 45 (side + gesture), decoded to
+# {type: touch, side, data: {gesture: single|double|triple|hold_start|hold_end}}.
+
+defaults:
+  timeout_seconds: 15
+  risk: safe
+
+experiments:
+  # ------------------------------------------------------------------ Touch
+  - id: touch-single-l
+    title: Single tap LEFT
+    category: touch
+    instruction: Single-tap the LEFT bud touchpad (bud in your ear, music paused is fine).
+    expected_signals:
+      - {type: touch, side: L, data: {gesture: single}}
+  - id: touch-single-r
+    title: Single tap RIGHT
+    category: touch
+    instruction: Single-tap the RIGHT bud touchpad.
+    expected_signals:
+      - {type: touch, side: R, data: {gesture: single}}
+  - id: touch-double-l
+    title: Double tap LEFT
+    category: touch
+    instruction: Double-tap the LEFT bud touchpad.
+    expected_signals:
+      - {type: touch, side: L, data: {gesture: double}}
+  - id: touch-double-r
+    title: Double tap RIGHT
+    category: touch
+    instruction: Double-tap the RIGHT bud touchpad.
+    expected_signals:
+      - {type: touch, side: R, data: {gesture: double}}
+  - id: touch-triple-l
+    title: Triple tap LEFT
+    category: touch
+    instruction: Triple-tap the LEFT bud touchpad.
+    expected_signals:
+      - {type: touch, side: L, data: {gesture: triple}}
+  - id: touch-triple-r
+    title: Triple tap RIGHT
+    category: touch
+    instruction: Triple-tap the RIGHT bud touchpad.
+    expected_signals:
+      - {type: touch, side: R, data: {gesture: triple}}
+  - id: touch-hold-l
+    title: Touch-and-hold LEFT
+    category: touch
+    instruction: Touch and hold the LEFT bud touchpad for about 2 seconds.
+    expected_signals:
+      - {type: touch, side: L, data: {gesture: hold_start}}
+  - id: touch-hold-r
+    title: Touch-and-hold RIGHT
+    category: touch
+    instruction: Touch and hold the RIGHT bud touchpad for about 2 seconds.
+    expected_signals:
+      - {type: touch, side: R, data: {gesture: hold_start}}
+  - id: touch-tap-playing
+    title: Tap while music is PLAYING
+    category: touch
+    instruction: Start music on the host, then single-tap either bud.
+    expected_signals: &touch_any
+      - {type: touch, data: {event: gesture}}
+  - id: touch-tap-paused
+    title: Tap while music is PAUSED
+    category: touch
+    instruction: Pause all audio on the host, then single-tap either bud.
+    expected_signals: *touch_any
+  - id: touch-tap-call
+    title: Tap during a call (optional)
+    category: touch
+    instruction: Start or receive a call, then single-tap either bud. Press Skip if you do not want to test calls.
+    timeout_seconds: 30
+    expected_signals: *touch_any
+  - id: touch-swipe
+    title: Swipe on the pad (expect nothing)
+    category: touch
+    instruction: Swipe up/down along the touchpad of either bud. The FE has no swipe gesture, so nothing is expected; anything that shows up is recorded.
+    expected_signals: []
+  - id: touch-locked-l
+    title: Touchpad locked, tap LEFT (expect suppression)
+    category: touch
+    risk: changes-settings
+    instruction: The touchpad will be locked by command (needs command sending enabled). Then tap the LEFT bud. No media key should arrive; the lock is undone afterwards.
+    command: {name: lock_touchpad, args: {locked: true}}
+    undo: true
+    timeout_seconds: 12
+    expected_signals:
+      - {type: command_result, data: {name: lock_touchpad, status: acked}}
+    forbidden_signals:
+      - {type: touch, data: {event: gesture}}
+  - id: touch-locked-r
+    title: Touchpad locked, tap RIGHT (expect suppression)
+    category: touch
+    risk: changes-settings
+    instruction: The touchpad will be locked by command. Then tap the RIGHT bud. No media key should arrive; the lock is undone afterwards.
+    command: {name: lock_touchpad, args: {locked: true}}
+    undo: true
+    timeout_seconds: 12
+    expected_signals:
+      - {type: command_result, data: {name: lock_touchpad, status: acked}}
+    forbidden_signals:
+      - {type: touch, data: {event: gesture}}
+
+  # ------------------------------------------------- Wear / placement / proximity
+  - id: wear-remove-l
+    title: Remove LEFT bud, reinsert
+    category: wear
+    instruction: Take the LEFT bud out of your ear, wait a second, put it back in.
+    timeout_seconds: 20
+    expected_signals:
+      - {type: wear, side: L, data: {state: out}}
+      - {type: wear, side: L, data: {state: in_ear}}
+  - id: wear-remove-r
+    title: Remove RIGHT bud, reinsert
+    category: wear
+    instruction: Take the RIGHT bud out of your ear, wait a second, put it back in.
+    timeout_seconds: 20
+    expected_signals:
+      - {type: wear, side: R, data: {state: out}}
+      - {type: wear, side: R, data: {state: in_ear}}
+  - id: wear-remove-both
+    title: Remove BOTH buds, reinsert
+    category: wear
+    instruction: Take both buds out, wait a second, put both back in.
+    timeout_seconds: 25
+    expected_signals:
+      - {type: wear, side: L, data: {state: out}}
+      - {type: wear, side: R, data: {state: out}}
+      - {type: wear, side: L, data: {state: in_ear}}
+      - {type: wear, side: R, data: {state: in_ear}}
+  - id: wear-cover-prox-l
+    title: Cover LEFT proximity sensor (not worn)
+    category: wear
+    instruction: Hold the LEFT bud in your hand (out of the case) and cover the inner proximity sensor with a fingertip for 2 seconds, then release.
+    timeout_seconds: 20
+    expected_signals:
+      - {type: wear, side: L, data: {state: in_ear}}
+  - id: wear-cover-prox-r
+    title: Cover RIGHT proximity sensor (not worn)
+    category: wear
+    instruction: Hold the RIGHT bud in your hand (out of the case) and cover the inner proximity sensor with a fingertip for 2 seconds, then release.
+    timeout_seconds: 20
+    expected_signals:
+      - {type: wear, side: R, data: {state: in_ear}}
+  - id: case-hall
+    title: Bud into case, close lid, open lid (Hall sensor)
+    category: wear
+    instruction: Put a bud into the case, close the lid, wait 2 seconds, open the lid.
+    timeout_seconds: 25
+    expected_signals:
+      - {type: case, data: {event: bud_in_case}}
+  - id: wear-one-out-of-case
+    title: Take only one bud out of the case
+    category: wear
+    instruction: With both buds in the open case, take only ONE bud out (any side).
+    timeout_seconds: 20
+    expected_signals:
+      - {type: case, data: {event: bud_out_of_case}}
+
+  # ----------------------------------------------------- Case / charging / battery
+  - id: case-open
+    title: Open the case lid
+    category: case
+    instruction: With buds inside, open the case lid.
+    expected_signals:
+      - any_of:
+          - {type: case}
+          - {type: wear}
+  - id: case-close
+    title: Close the case lid
+    category: case
+    instruction: With buds inside, close the case lid.
+    expected_signals:
+      - any_of:
+          - {type: case}
+          - {type: wear}
+  - id: case-usb-plug
+    title: Plug USB-C into the case
+    category: case
+    instruction: Plug a USB-C charging cable into the case.
+    expected_signals:
+      - {type: case, data: {event: charging}}
+  - id: case-usb-unplug
+    title: Unplug USB-C from the case
+    category: case
+    instruction: Unplug the USB-C cable from the case.
+    expected_signals:
+      - {type: case, data: {event: not_charging}}
+  - id: battery-cadence
+    title: Battery report cadence
+    category: case
+    instruction: Leave the buds alone (in ear or in the open case) for 60 seconds. We count battery reports to find out whether they are periodic or only on change.
+    timeout_seconds: 60
+    expected_signals:
+      - {type: battery, min_count: 3}
+
+  # ------------------------------------------------------------------ Noise control
+  - id: noise-anc-on
+    title: Set ANC ON (command)
+    category: noise
+    risk: changes-settings
+    instruction: ANC is set by command (needs command sending enabled); watch for the state event. Wear the buds to hear it.
+    command: {name: noise_control, args: {mode: anc}}
+    undo: true
+    expected_signals:
+      - {type: anc, data: {mode: anc}}
+  - id: noise-ambient-on
+    title: Set Ambient ON (command)
+    category: noise
+    risk: changes-settings
+    instruction: Ambient sound is set by command; watch for the state event.
+    command: {name: noise_control, args: {mode: ambient}}
+    undo: true
+    expected_signals:
+      - {type: anc, data: {mode: ambient}}
+  - id: noise-off
+    title: Set noise control OFF (command)
+    category: noise
+    risk: changes-settings
+    instruction: Noise control is set to off by command; watch for the state event.
+    command: {name: noise_control, args: {mode: off}}
+    undo: true
+    expected_signals:
+      - {type: anc, data: {mode: off}}
+  - id: noise-touch-hold
+    title: Change mode by touch-and-hold
+    category: noise
+    instruction: "Only if touch-and-hold is mapped to noise control (Galaxy Wearable, or the touchpad_option command): touch and hold a bud and watch the mode event. Skip if not mapped."
+    timeout_seconds: 20
+    expected_signals:
+      - {type: anc}
+
+  # ------------------------------------------------------------------ Audio state
+  - id: audio-start-music
+    title: Start music on the host
+    category: audio
+    instruction: Start playing music on the host computer through the buds.
+    expected_signals:
+      - any_of:
+          - {type: audio}
+          - {type: media_key}
+  - id: audio-pause-music
+    title: Pause music on the host
+    category: audio
+    instruction: Pause the music on the host computer.
+    expected_signals:
+      - any_of:
+          - {type: audio}
+          - {type: media_key}
+  - id: audio-codec
+    title: Negotiated codec change
+    category: audio
+    instruction: If your host allows it, force a different codec (AAC/SBC) or reconnect the buds and note the codec in the notes.
+    timeout_seconds: 30
+    expected_signals:
+      - {type: audio, data: {event: codec}}
+  - id: audio-call
+    title: Place / receive a call (optional)
+    category: audio
+    instruction: Place or receive a call through the buds (answer/end with a tap if you like). Press Skip to leave out.
+    timeout_seconds: 45
+    expected_signals:
+      - {type: audio, data: {event: hfp}}
+
+  # ------------------------------------------------------------------ Commands
+  - id: cmd-eq
+    title: Command - equalizer preset
+    category: commands
+    risk: changes-settings
+    instruction: Sets EQ preset 2 by command; the previous value is restored afterwards. Record round-trip latency.
+    command: {name: equalizer, args: {preset: 2}}
+    undo: true
+    expected_signals:
+      - {type: command_result, data: {name: equalizer, status: acked}}
+  - id: cmd-touchpad-option
+    title: Command - touch-and-hold action mapping
+    category: commands
+    risk: changes-settings
+    instruction: Maps touch-and-hold to noise control on both sides; restored afterwards.
+    command: {name: touchpad_option, args: {left: noise_control, right: noise_control}}
+    undo: true
+    expected_signals:
+      - {type: command_result, data: {name: touchpad_option, status: acked}}
+  - id: cmd-lock-touchpad
+    title: Command - lock / unlock touchpad
+    category: commands
+    risk: changes-settings
+    instruction: Locks the touchpads by command; unlocked again afterwards.
+    command: {name: lock_touchpad, args: {locked: true}}
+    undo: true
+    expected_signals:
+      - {type: command_result, data: {name: lock_touchpad, status: acked}}
+  - id: cmd-ambient-volume
+    title: Command - ambient sound level
+    category: commands
+    risk: changes-settings
+    instruction: Sets ambient level 1 by command.
+    command: {name: ambient_volume, args: {level: 1}}
+    expected_signals:
+      - {type: command_result, data: {name: ambient_volume, status: acked}}
+  - id: cmd-time
+    title: Command - time sync
+    category: commands
+    risk: changes-settings
+    instruction: Sends the current time to the buds.
+    command: {name: update_time, args: {}}
+    expected_signals:
+      - {type: command_result, data: {name: update_time, status: acked}}
+  - id: cmd-find-my
+    title: Command - Find My Earbuds (LOUD)
+    category: commands
+    risk: audible
+    instruction: REMOVE THE BUDS FROM YOUR EARS. They will beep loudly for a few seconds, then are stopped again automatically.
+    command: {name: find_my_start, args: {}}
+    undo: true
+    timeout_seconds: 6
+    expected_signals:
+      - {type: command_result, data: {name: find_my_start, status: acked}}
+
+  # ------------------------------------------------------------------ Discovery
+  - id: discovery-freeform
+    title: Do something unlisted
+    category: discovery
+    instruction: Describe in the text box what you did, then do it. All traffic in the time window is tagged with your note.
+    freeform: true
+    timeout_seconds: 30
+    expected_signals: []

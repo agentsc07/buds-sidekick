@@ -1,0 +1,15 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pyyaml>=6
+# macOS transport + Layer A (media keys, connection state)
+pyobjc-framework-IOBluetooth>=10; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10; sys_platform == "darwin"
+pyobjc-framework-Cocoa>=10; sys_platform == "darwin"
+# optional BLE scan
+bleak>=0.21
+# tests
+pytest>=8
+pytest-asyncio>=0.23
+httpx>=0.27
+sounddevice>=0.4
+numpy>=1.26

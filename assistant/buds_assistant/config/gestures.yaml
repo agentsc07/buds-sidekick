@@ -1,0 +1,16 @@
+# Gesture -> action bindings. Tokens come straight from the buds: side L|R, gesture single|double|triple|hold.
+# A binding is one gesture ("L:double"), a sequence (["L:single","R:single"], within sequence_timeout),
+# or a hold. mode: toggle = hold once to start, hold again to stop (one continuous hold sends a burst of
+# events; bursts closer together than hold_debounce seconds count as one hold).
+#
+# Actions: ask, ask_toggle, note, note_toggle, repeat, battery, time, stop  (ask_hold/note_hold = raw press-and-hold)
+sequence_timeout: 0.7
+hold_debounce: 1.2
+bindings:
+  - {name: ask,        gesture: "L:double", action: ask}          # double-tap left: ask a question
+  - {name: ask-toggle,  gesture: "L:hold", mode: toggle, action: ask_toggle}   # hold left: start listening; hold left again: stop
+  - {name: note-toggle, gesture: "R:hold", mode: toggle, action: note_toggle}  # hold right: start a note; hold right again: save
+  - {name: repeat,     gesture: "R:double", action: repeat}       # double-tap right: repeat last answer
+  - {name: battery,    gesture: "L:triple", action: battery}      # triple-tap left: battery levels
+  - {name: stop,       gesture: "R:triple", action: stop}         # triple-tap right: stop talking/listening
+  - {name: time,       sequence: ["L:single", "R:single"], action: time}   # left then right tap: the time

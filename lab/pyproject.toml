@@ -1,0 +1,14 @@
+[project]
+name = "budslab"
+version = "0.1.0"
+description = "Local capability lab for the Samsung Galaxy Buds FE (SM-R400)"
+requires-python = ">=3.11"
+dependencies = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "pyyaml>=6"]
+[project.optional-dependencies]
+macos = ["pyobjc-framework-IOBluetooth", "pyobjc-framework-Quartz", "pyobjc-framework-Cocoa"]
+ble = ["bleak"]
+test = ["pytest", "pytest-asyncio", "httpx"]
+[tool.setuptools.packages.find]
+include = ["budslab*"]
+[tool.setuptools.package-data]
+budslab = ["web/*", "web/vendor/*"]

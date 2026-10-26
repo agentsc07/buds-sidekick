@@ -1,0 +1,5 @@
+pyyaml>=6
+numpy>=1.26
+sounddevice>=0.4
+faster-whisper>=1.0
+# plus the lab's requirements (Bluetooth transport): see ../lab/requirements.txt
