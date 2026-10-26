@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| Landing page | _pending: Vercel link (see `SUBMISSION_LOG.md`)_ |
+| Landing page | https://site-psi-five-93.vercel.app |
 | Source | https://github.com/agentsc07/buds-sidekick |
 | Install | `pipx install "git+https://github.com/agentsc07/buds-sidekick.git"` then `buds-sidekick setup` |
-| Live demo (web, no install) | the landing page, "Try the live demo" (the real dashboard on sample data) |
-| Mac app | `.dmg` on the GitHub Release (unsigned: right-click, Open); built by `packaging/build_app.sh` |
+| Live demo (web, no install) | https://site-psi-five-93.vercel.app/demo (the real dashboard on sample data) |
+| Mac app | https://github.com/agentsc07/buds-sidekick/releases/latest : `.dmg` (unsigned: right-click, Open) built by `packaging/build_app.sh` |
 | Try it with no earbuds | `buds-sidekick --simulate`, then open http://127.0.0.1:8770 |
 | Report / demo script | [docs/report.md](docs/report.md) / [docs/demo-script.md](docs/demo-script.md) |
 
