@@ -20,3 +20,9 @@ _holding/
 *.pem
 *.key
 docs/validation/clips/
+*.db
+*.db-shm
+*.db-wal
+*.wav
+*.jsonl
+!site/results.json

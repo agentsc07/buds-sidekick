@@ -41,6 +41,8 @@ table { width:100%; border-collapse:collapse; font-size:15px; } th, td { text-al
 pre { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; overflow-x:auto; font-size:14.5px; line-height:1.5; }
 code { font-family:ui-monospace, "SF Mono", Menlo, monospace; font-size:.92em; }
 .diagram { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:12px; } .diagram svg { width:100%; height:auto; display:block; }
+details summary { cursor:pointer; padding:10px 0; font-size:17px; }
+.shots { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); margin-top:20px; } .shots figure { margin:0; } .shots img { width:100%; height:auto; border-radius:12px; border:1px solid var(--line); display:block; } .shots figcaption { color:var(--muted); font-size:14px; margin-top:6px; text-align:center; }
 .privacy { display:grid; gap:12px; } .privacy li { margin:0 0 6px; }
 footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--muted); font-size:14.5px; }
 </style>
@@ -48,14 +50,14 @@ footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--mute
 <body>
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top"><i></i>Buds Sidekick</a>
-  <nav><a href="#demo">Demo</a><a href="#how">How it works</a><a href="#results">Results</a><a href="#install">Install</a><a href="#privacy">Privacy</a></nav>
+  <nav><a href="#demo">Video</a><a href="#features">Features</a><a href="#results">Results</a><a href="#privacy">Privacy</a><a href="#developers">Developers</a></nav>
 </div></header>
 
 <main id="top">
 <div class="wrap hero">
   <h1>A private assistant <em>in your ear</em></h1>
   <p>It listens, knows who is speaking, remembers what they said, whispers help at the right moment and translates Telugu and English. Everything runs on your Mac.</p>
-  <a class="btn" href="demo/?demo=1&state=autopilot">Try the live demo</a><a class="btn alt" href="#install">Install it</a><a class="btn alt" href="#demo">Watch the video</a>
+  <a class="btn" href="/demo">Try the live demo</a><a class="btn alt" href="https://github.com/agentsc07/buds-sidekick/releases/latest">Download for Mac</a>
 </div>
 
 <section id="demo"><div class="wrap">
@@ -63,9 +65,14 @@ footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--mute
   <p class="lead">Listen, who is talking, Ask, an Autopilot whisper, and Telugu to English.</p>
   <div class="video" id="video"><!-- VIDEO_URL: replace this block with <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe> -->
     <div><b>Demo video coming soon</b><br><small>A 2-minute screen recording will appear here.</small></div></div>
+  <div class="shots">
+    <figure><img src="img/home.png" alt="Home: live conversation with names and an Autopilot whisper" loading="lazy"><figcaption>Listen and Autopilot</figcaption></figure>
+    <figure><img src="img/people.png" alt="People: saved voices and their health" loading="lazy"><figcaption>Who is talking</figcaption></figure>
+    <figure><img src="img/controls.png" alt="Controls: the gestures on each earbud" loading="lazy"><figcaption>Earbud gestures</figcaption></figure>
+  </div>
 </div></section>
 
-<section><div class="wrap">
+<section id="features"><div class="wrap">
   <h2>What it does</h2>
   <p class="lead">Built for Galaxy Buds FE on a MacBook. No account, no cloud.</p>
   <div class="grid">
@@ -78,8 +85,54 @@ footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--mute
   </div>
 </div></section>
 
-<section id="how"><div class="wrap">
-  <h2>How it works</h2>
+<section id="results"><div class="wrap">
+  <h2>Results</h2>
+  <p class="lead">Measured on a MacBook Air M3 (16 GB). Synthetic voices are a floor, not real people; rows say which is which.</p>
+  <div class="grid" id="stats">
+    <div class="stat card"><b>1.7%</b><span>speaker error (EER), TitaNet, mixed enrolment, synthetic voices</span></div>
+    <div class="stat card"><b data-k="wer_en">…</b><span>English word error, synthetic clips</span></div>
+    <div class="stat card"><b data-k="wer_te">…</b><span>Telugu word error, synthetic clips</span></div>
+    <div class="stat card"><b data-k="ap">…</b><span>Autopilot precision, scripted 10-minute conversation</span></div>
+  </div>
+  <h3 style="margin-top:32px">Speaker identification (equal error rate, lower is better)</h3>
+  <table><thead><tr><th>Model</th><th>Clean enrolment only</th><th>Clean + buds-like enrolment</th></tr></thead><tbody>
+    <tr><td>WeSpeaker ResNet34</td><td>29.3%</td><td>7.1%</td></tr><tr><td>WeSpeaker ResNet293</td><td>42.5%</td><td>9.3%</td></tr>
+    <tr><td>3D-Speaker CAM++</td><td>34.1%</td><td>28.8%</td></tr><tr><td><b>NeMo TitaNet-small (used)</b></td><td><b>12.4%</b></td><td><b>2.0%</b></td></tr></tbody></table>
+  <h3 style="margin-top:32px">Latency, end of speech to start of the answer</h3>
+  <table><thead><tr><th>Path</th><th>Median</th><th>Runs</th></tr></thead><tbody id="lat"><tr><td colspan="3">…</td></tr></tbody></table>
+  <p class="note" id="resnote">Full method and caveats in the <a href="https://github.com/agentsc07/buds-sidekick/blob/main/docs/report.md">report</a>. Speaker accuracy on real people and Telugu from real speakers are still being measured.</p>
+</div></section>
+
+<section id="privacy"><div class="wrap">
+  <h2>Privacy: everything runs locally</h2>
+  <ul class="privacy">
+    <li>Speech recognition, voice identity, memory and the language models all run on your Mac. There is no account and no cloud service.</li>
+    <li>The dashboard only accepts requests from your own computer.</li>
+    <li>Unknown voices are never saved; Telugu transcripts are never saved; Translate keeps nothing; <b>Go private</b> closes the mic and wipes the replay buffer.</li>
+    <li><b>Forget</b> a person and their voiceprint, transcripts, audio and facts are deleted, with exact counts shown.</li>
+    <li>Not done yet: encryption at rest (files are protected by your macOS account only).</li>
+  </ul>
+</div></section>
+<section id="developers"><div class="wrap">
+  <details><summary><b>For developers</b>: install from the terminal</summary>
+  <p class="note">This path installs straight from GitHub, so it only works once the repository is public. Most people should use the Mac download above.</p>
+<p class="lead">macOS 13 or later on Apple silicon, 16 GB of memory, Python 3.11+. Galaxy Buds are optional: try it with <code>--simulate</code>.</p>
+<pre><code># 1. Get Ollama (the local language models): https://ollama.com/download
+
+# 2. Install Buds Sidekick
+brew install pipx &amp;&amp; pipx ensurepath
+pipx install "git+https://github.com/agentsc07/buds-sidekick.git"
+
+# 3. Download the models (once, a few GB) and check everything
+buds-sidekick setup
+
+# 4. Run: no buds needed with --simulate
+buds-sidekick --simulate
+# then open http://127.0.0.1:8770</code></pre>
+  <p class="note">With buds: turn Bluetooth off on your phone first (the buds talk to one device), connect them to the Mac, then run <code>buds-sidekick</code>.</p>
+  </details>
+  <details style="margin-top:14px"><summary><b>For developers</b>: how it is built</summary>
+<h2>How it works</h2>
   <p class="lead">Audio goes in, is understood on-device, and the answer comes back as a whisper. Nothing leaves the Mac.</p>
   <div class="diagram">
   <svg viewBox="0 0 980 360" role="img" aria-label="Architecture: buds and Mac mic feed a segmenter, then speaker identity and speech recognition, then memory and Autopilot, then a whisper in the ear or the dashboard">
@@ -108,54 +161,7 @@ footer { padding:36px 0 60px; border-top:1px solid var(--line); color:var(--mute
     </g>
   </svg></div>
   <p class="note">Models: NeMo TitaNet (speaker), faster-whisper small.en and a Telugu Whisper (speech), Gemma 4 12B via Ollama (answers, judgement, translation).</p>
-</div></section>
-
-<section id="results"><div class="wrap">
-  <h2>Results</h2>
-  <p class="lead">Measured on a MacBook Air M3 (16 GB). Synthetic voices are a floor, not real people; rows say which is which.</p>
-  <div class="grid" id="stats">
-    <div class="stat card"><b>1.7%</b><span>speaker error (EER), TitaNet, mixed enrolment, synthetic voices</span></div>
-    <div class="stat card"><b data-k="wer_en">…</b><span>English word error, synthetic clips</span></div>
-    <div class="stat card"><b data-k="wer_te">…</b><span>Telugu word error, synthetic clips</span></div>
-    <div class="stat card"><b data-k="ap">…</b><span>Autopilot precision, scripted 10-minute conversation</span></div>
-  </div>
-  <h3 style="margin-top:32px">Speaker identification (equal error rate, lower is better)</h3>
-  <table><thead><tr><th>Model</th><th>Clean enrolment only</th><th>Clean + buds-like enrolment</th></tr></thead><tbody>
-    <tr><td>WeSpeaker ResNet34</td><td>29.3%</td><td>7.1%</td></tr><tr><td>WeSpeaker ResNet293</td><td>42.5%</td><td>9.3%</td></tr>
-    <tr><td>3D-Speaker CAM++</td><td>34.1%</td><td>28.8%</td></tr><tr><td><b>NeMo TitaNet-small (used)</b></td><td><b>12.4%</b></td><td><b>2.0%</b></td></tr></tbody></table>
-  <h3 style="margin-top:32px">Latency, end of speech to start of the answer</h3>
-  <table><thead><tr><th>Path</th><th>Median</th><th>Runs</th></tr></thead><tbody id="lat"><tr><td colspan="3">…</td></tr></tbody></table>
-  <p class="note" id="resnote">Full method and caveats in the <a href="https://github.com/agentsc07/buds-sidekick/blob/main/docs/report.md">report</a>. Speaker accuracy on real people and Telugu from real speakers are still being measured.</p>
-</div></section>
-
-<section id="install"><div class="wrap">
-  <h2>Install</h2>
-  <p class="lead">Easiest: download the app (.dmg) from the <a href="https://github.com/agentsc07/buds-sidekick/releases/latest">latest release</a>, drag it to Applications, right-click, Open. Or use the command line below.</p>
-  <p class="lead">macOS 13 or later on Apple silicon, 16 GB of memory, Python 3.11+. Galaxy Buds are optional: try it with <code>--simulate</code>.</p>
-<pre><code># 1. Get Ollama (the local language models): https://ollama.com/download
-
-# 2. Install Buds Sidekick
-brew install pipx &amp;&amp; pipx ensurepath
-pipx install "git+https://github.com/agentsc07/buds-sidekick.git"
-
-# 3. Download the models (once, a few GB) and check everything
-buds-sidekick setup
-
-# 4. Run: no buds needed with --simulate
-buds-sidekick --simulate
-# then open http://127.0.0.1:8770</code></pre>
-  <p class="note">With buds: turn Bluetooth off on your phone first (the buds talk to one device), connect them to the Mac, then run <code>buds-sidekick</code>.</p>
-</div></section>
-
-<section id="privacy"><div class="wrap">
-  <h2>Privacy: everything runs locally</h2>
-  <ul class="privacy">
-    <li>Speech recognition, voice identity, memory and the language models all run on your Mac. There is no account and no cloud service.</li>
-    <li>The dashboard only accepts requests from your own computer.</li>
-    <li>Unknown voices are never saved; Telugu transcripts are never saved; Translate keeps nothing; <b>Go private</b> closes the mic and wipes the replay buffer.</li>
-    <li><b>Forget</b> a person and their voiceprint, transcripts, audio and facts are deleted, with exact counts shown.</li>
-    <li>Not done yet: encryption at rest (files are protected by your macOS account only).</li>
-  </ul>
+  </details>
 </div></section>
 </main>
 

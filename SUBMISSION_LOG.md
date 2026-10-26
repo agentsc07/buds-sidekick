@@ -72,3 +72,18 @@
   ("Try the live demo" on the landing page; copy of `dashboard/web`, re-copy after UI changes); (2) `packaging/build_app.sh` builds `dist/Buds-Sidekick-1.0.0.dmg`
   (unsigned launcher .app: installs the bundled wheel into its own venv on first run, runs `buds-sidekick setup`, opens the dashboard). Needs Python 3.11+ and Ollama on the Mac.
   Not py2app/Briefcase: ctranslate2/onnx/sherpa wheels make a frozen bundle fragile; this is the reliable option. Launcher syntax-checked, not run end to end.
+
+## Secrets / personal-data scan (before going public)
+- Working tree + the pushed commit (`submission`, branch `main` on GitHub): no keys/tokens/private keys/`.env`/passwords (regex scan), no personal paths or email,
+  no recordings (`*.wav`), no databases (`*.db`), no enrolment/people data. Two 53-byte protocol packet fixtures (`lab/tests/*.bin`: battery/firmware status) are harmless.
+  Placeholder MAC `AA:BB:CC:DD:EE:FF` only in help text.
+- Sensitive files that exist ONLY on disk and are git-ignored (not moved, because moving them would wipe your enrolment and conversations):
+  `assistant/data/` (people DB, voiceprints, notes), `assistant/data-sim/` (synthetic), `lab/data/` (earbud sessions). `.gitignore` now also covers `*.db`, `*.wav`, `*.jsonl`,
+  `.env`, `*.pem`, `*.key`, `_holding/`, `docs/validation/clips/` (your recordings).
+- Local-only OLD history (branches `main`, `v2`) contains `assistant/data-sim/sidekick.db` and the 185 MB model files. They were never pushed; **push only
+  `submission:main`, never `--all` or the old branches.**
+
+## Site restructure + test
+- `site/`: hero (Try the live demo -> /demo, Download for Mac -> releases/latest), video placeholder + 3 screenshots, features, results, privacy, collapsed "For developers"
+  (terminal install, notes it needs a public repo; architecture). `vercel.json`: cleanUrls + trailingSlash (so `/demo` -> `/demo/` and relative assets resolve).
+  `site/sync-demo.sh` refreshes `site/demo/` from the dashboard. `site/tests/check_site.py` (Playwright + system Chrome): both buttons, /demo, People page, zero console errors: PASS.
