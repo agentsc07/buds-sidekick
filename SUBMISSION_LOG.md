@@ -5,9 +5,9 @@
 - [x] Step 1 Scope freeze (Interpreter: finish or flag-hide)
 - [x] Step 2 Dashboard polish (onboarding, empty/error states, jargon)
 - [~] Step 3 Evaluation: synthetic numbers done; real recordings pending (docs/validation/recording-script.md)
-- [~] Step 4 Packaging: pyproject + `buds-sidekick` + setup done; .app/.dmg and Release pending
-- [ ] Step 5 Landing page (site/ on Vercel)
-- [ ] Step 6 README, docs/report.md, docs/demo-script.md, links
+- [x] Step 4 Packaging: pyproject, `buds-sidekick`, setup, native-window .app/.dmg, GitHub Release v1.0.1 (live)
+- [x] Step 5 Landing page: https://site-psi-five-93.vercel.app (demo at /demo)
+- [x] Step 6 README, docs/report.md, docs/demo-script.md, links (video + real-voice numbers pending)
 
 ## Step 0: state and gaps (2026-10-26)
 - Docs read: README, assistant/README, docs/README, architecture, spec-v3-latency, voice-eval.
@@ -87,3 +87,7 @@
 - `site/`: hero (Try the live demo -> /demo, Download for Mac -> releases/latest), video placeholder + 3 screenshots, features, results, privacy, collapsed "For developers"
   (terminal install, notes it needs a public repo; architecture). `vercel.json`: cleanUrls + trailingSlash (so `/demo` -> `/demo/` and relative assets resolve).
   `site/sync-demo.sh` refreshes `site/demo/` from the dashboard. `site/tests/check_site.py` (Playwright + system Chrome): both buttons, /demo, People page, zero console errors: PASS.
+
+## STATUS (2026-10-26, end of session)
+- LIVE: repo https://github.com/agentsc07/buds-sidekick (public), Release v1.0.1 (.dmg, native window, no Terminal), site https://site-psi-five-93.vercel.app (+ /demo). The BLOCKED section above is resolved (user ran the login commands).
+- Remaining (user): real-voice clips + rated Autopilot session (docs/validation/recording-script.md), demo video (replace VIDEO_URL in site/index.html, redeploy), try the .dmg end to end.
