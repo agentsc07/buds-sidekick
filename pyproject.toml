@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "buds-sidekick"
-version = "1.0.0"
+version = "1.0.1"
 description = "A private, local voice assistant for Galaxy Buds FE on a Mac: listens, knows who is speaking, remembers, whispers help, translates."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -19,6 +19,8 @@ dependencies = [
   "pyobjc-framework-Cocoa>=10; sys_platform == 'darwin'",
   "pyobjc-framework-Quartz>=10; sys_platform == 'darwin'",
   "pyobjc-framework-IOBluetooth>=10; sys_platform == 'darwin'",
+  "pyobjc-framework-WebKit>=10; sys_platform == 'darwin'",
+  "pywebview>=5; sys_platform == 'darwin'",
 ]
 
 [project.optional-dependencies]

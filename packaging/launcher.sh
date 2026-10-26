@@ -1,29 +1,29 @@
 #!/bin/bash
-# Launcher inside Buds Sidekick.app: first run installs into ~/Library/Application Support/Buds Sidekick/venv, then runs in Terminal.
+# Launcher inside Buds Sidekick.app. First run: install into ~/Library/Application Support/Buds Sidekick/venv (with a dialog, no Terminal),
+# then open Sidekick in its own window. Models are downloaded from inside the app (Setup, "Download what is missing").
 RES="$(cd "$(dirname "$0")/../Resources" && pwd)"
 HOME_DIR="$HOME/Library/Application Support/Buds Sidekick"
-SCRIPT="$HOME_DIR/run.command"
-mkdir -p "$HOME_DIR"
-cat > "$SCRIPT" <<RUN
-#!/bin/bash
-cd "\$HOME"
-clear; echo "Buds Sidekick"; echo
 VENV="$HOME_DIR/venv"
-WHEEL=\$(ls "$RES"/buds_sidekick-*.whl | head -1)
-if [ ! -x "\$VENV/bin/buds-sidekick" ] || [ "\$WHEEL" -nt "\$VENV/.installed" ]; then
+LOG="$HOME_DIR/logs/install.log"
+mkdir -p "$HOME_DIR/logs"
+WHEEL=$(ls "$RES"/buds_sidekick-*.whl | head -1)
+
+alert() { osascript -e "display dialog \"$1\" buttons {\"OK\"} default button 1 with title \"Buds Sidekick\" with icon caution" >/dev/null 2>&1; }
+
+if [ ! -x "$VENV/bin/buds-sidekick" ] || [ "$WHEEL" -nt "$VENV/.installed" ]; then
   PY=""
-  for c in /opt/homebrew/bin/python3.13 /opt/homebrew/bin/python3.12 /opt/homebrew/bin/python3.11 /opt/homebrew/bin/python3 /usr/local/bin/python3 python3; do
-    if command -v "\$c" >/dev/null 2>&1 && "\$c" -c 'import sys; sys.exit(sys.version_info < (3, 11))' 2>/dev/null; then PY="\$c"; break; fi
+  for c in /opt/homebrew/bin/python3.13 /opt/homebrew/bin/python3.12 /opt/homebrew/bin/python3.11 /opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3; do
+    if [ -x "$c" ] && "$c" -c 'import sys; sys.exit(sys.version_info < (3, 11))' 2>/dev/null; then PY="$c"; break; fi
   done
-  if [ -z "\$PY" ]; then echo "Python 3.11 or newer is needed. Install it with:  brew install python  (or from python.org), then open this app again."; read -r -p "Press Enter to close"; exit 1; fi
-  echo "First run: installing (a few minutes, needs internet)..."
-  "\$PY" -m venv "\$VENV" && "\$VENV/bin/pip" install -q "\$WHEEL" && touch "\$VENV/.installed" || { echo "Install failed."; read -r -p "Press Enter to close"; exit 1; }
-  "\$VENV/bin/buds-sidekick" setup
+  if [ -z "$PY" ]; then
+    alert "Buds Sidekick needs Python 3.11 or newer. Install it from python.org (or with: brew install python), then open the app again."
+    open "https://www.python.org/downloads/macos/"; exit 1
+  fi
+  osascript -e 'display dialog "Setting up Buds Sidekick for the first time.\n\nThis takes a few minutes and needs internet. The app opens by itself when it is ready." buttons {"OK"} default button 1 with title "Buds Sidekick" giving up after 900' >/dev/null 2>&1 &
+  DLG=$!
+  if "$PY" -m venv "$VENV" >"$LOG" 2>&1 && "$VENV/bin/pip" install -q "$WHEEL" >>"$LOG" 2>&1; then touch "$VENV/.installed"; else
+    kill $DLG 2>/dev/null; alert "The install did not finish. Check your internet connection and open the app again. Details: $LOG"; exit 1
+  fi
+  kill $DLG 2>/dev/null
 fi
-echo; echo "Starting. Your browser will open. Close this window or press Ctrl+C to stop."
-(sleep 6; open http://127.0.0.1:8770) &
-read -r -t 8 -p "Using your Galaxy Buds? Press Enter within 8 s for buds mode, otherwise practice mode starts: " ans && MODE="" || MODE="--simulate"
-exec "\$VENV/bin/buds-sidekick" \$MODE
-RUN
-chmod +x "$SCRIPT"
-open -a Terminal "$SCRIPT"
+exec "$VENV/bin/buds-sidekick" app
