@@ -57,3 +57,12 @@
 ## Git decision
 - History holds a 185 MB blob (`assistant/models/ggml-te-small.bin`) that GitHub rejects. Not rewriting history. The old branches stay local and untouched;
   the GitHub `main` is an orphan snapshot of the current tree (branch `submission`).
+
+## Step 5: landing page
+- `site/` (static: index.html, results.json copied from docs/validation/eval-results.json, vercel.json). Checked locally with a headless-Chrome screenshot.
+  Demo video is a placeholder (search `VIDEO_URL`). Install links point at github.com/agentsc07/buds-sidekick.
+
+## BLOCKED (needs the user)
+- Creating the GitHub repo and pushing (`gh repo create agentsc07/buds-sidekick --private`, `git push origin submission:main`) was denied by the permission
+  classifier ("public data-sharing upload"), so nothing has been published. Also not done for the same reason: Vercel deploy of `site/`, GitHub Release.
+- Local state: branch `submission` (orphan snapshot, ready to push); no remote configured yet.
