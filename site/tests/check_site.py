@@ -10,7 +10,8 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
 handler = functools.partial(Quiet, directory=str(ROOT))
 srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
 threading.Thread(target=srv.serve_forever, daemon=True).start()
-base = f"http://127.0.0.1:{srv.server_address[1]}"
+import os
+base = os.environ.get("SITE_URL", f"http://127.0.0.1:{srv.server_address[1]}").rstrip("/")      # SITE_URL=https://... tests a deployment
 problems, ok = [], []
 
 with sync_playwright() as p:
