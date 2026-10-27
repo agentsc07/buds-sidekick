@@ -7,7 +7,7 @@
 - [~] Step 3 Evaluation: synthetic numbers done; real recordings pending (docs/validation/recording-script.md)
 - [x] Step 4 Packaging: pyproject, `buds-sidekick`, setup, native-window .app/.dmg, GitHub Release v1.0.1 (live)
 - [x] Step 5 Landing page: https://site-psi-five-93.vercel.app (demo at /demo)
-- [x] Step 6 README, docs/report.md, docs/demo-script.md, links (video + real-voice numbers pending)
+- [x] Step 6 README, report, demo script, links (demo video removed from the site; real-voice numbers pending)
 
 ## Step 0: state and gaps (2026-10-26)
 - Docs read: README, assistant/README, docs/README, architecture, spec-v3-latency, voice-eval.

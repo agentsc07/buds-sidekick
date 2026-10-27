@@ -1,0 +1,31 @@
+flowchart TD
+  A["1. You open the Mac app or run buds-sidekick<br/>cli.py, desktop.py"] --> B{"Galaxy Buds connected?<br/>desktop.py asks system_profiler"}
+  B -- yes --> C["Real mode: sidekick.py opens the buds link<br/>lab/budslab RFCOMM: taps, wear, battery"]
+  B -- no --> D["Practice mode (--simulate):<br/>you drive taps from the page"]
+  C --> E["Window opens http://127.0.0.1:8770<br/>FastAPI server + Preact page"]
+  D --> E
+  E --> F{"First run?"}
+  F -- yes --> G["Setup: health check, download models,<br/>mic check, record your voice, gestures, privacy<br/>api_v2.py, pulls.py, speaker.py"]
+  F -- no --> H["Home screen"]
+  G --> H
+  H --> I["2. You switch Listening on<br/>or hold the right bud<br/>modes.py ModeManager.set_mode"]
+  I --> J["Mic opens: buds mic or Mac mic<br/>capture.py, 20 ms chunks, 16 kHz"]
+  J --> K["Segmenter cuts speech from silence<br/>segmenter.py"]
+  K --> L["Pipeline worker thread<br/>pipeline.py _process"]
+  L --> M{"Is this the assistant's own voice<br/>coming back through the mic?"}
+  M -- yes --> X["Dropped"]
+  M -- no --> N["Who spoke?<br/>TitaNet voiceprint, speaker.py"]
+  N --> O["What was said?<br/>Whisper small.en, or the Telugu model<br/>if the language gate says Telugu<br/>transcribe.py"]
+  O --> P["Save by that person's policy<br/>store.py SQLite, memory.py embeddings"]
+  O --> Q["Show it: event bus to WebSocket to Home<br/>events.py, uistate.py"]
+  O --> R{"Line starts with<br/>Sidekick or Autopilot?<br/>wake.py"}
+  R -- yes --> S["3. ASK: brain.py<br/>rules, your calendar, or memory + local model"]
+  R -- no --> T["4. AUTOPILOT, if on:<br/>rules (autopilot.py) + model judge (judge.py)<br/>then gates: gap, budget, not mid-sentence"]
+  H --> U["Left bud tap = Ask:<br/>next sentence is the question<br/>sidekick.py _ask"]
+  U --> S
+  S --> V["Reply text, then spoken<br/>output.py: macOS say, played to buds or Mac speakers"]
+  T --> V
+  H --> W["5. TRANSLATE switch:<br/>models.py loads Telugu speech, Mac mic,<br/>short phrases, interpreter.py queue,<br/>Gemma translates, Geeta or Samantha speaks"]
+  W --> V
+  H --> Y["6. Go private (3 taps on left bud):<br/>mic closed, replay buffer wiped, nothing saved"]
+  I --> Z["7. Listening off: conversation ends,<br/>model extracts promises and facts into memory<br/>memory.py extract_facts"]
